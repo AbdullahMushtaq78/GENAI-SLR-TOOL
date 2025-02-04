@@ -9,6 +9,7 @@ from camel.tasks import Task
 from personas import *
 from typing import List
 from dotenv import load_dotenv
+
 load_dotenv()
 
 PLATFORM = ModelPlatformType.OPENAI
@@ -18,9 +19,9 @@ MESSAGES_WINDOW = 10
 TOOLS = []
 
 
-#=======================
+# =======================
 # Paper Divison Agent
-#=======================
+# =======================
 SYSTEM_PROMPT_PDA = (
     "You are a helpful assistant that processes the text from systematic literature review (SLR)"
     "papers and extracts specific sections. Your task is to analyze the input text and return "
@@ -41,11 +42,11 @@ SYSTEM_PROMPT_PDA = (
     "Analyze the text carefully and extract content to these sections."
     "If you can't find anything related to any section, just return empty string for that specific section only."
     "Do not omit/add anything from/in the input."
-)  
+)
 
-#=======================
+# =======================
 # Output Format Agent
-#=======================
+# =======================
 SYSTEM_PROMPT_FORMATTER = f"""
 You are a synthesis agent responsible for aggregating and structuring feedback from four different workforces of agents. Each workforce contains multiple agents, and your task is to consolidate their outputs into a cohesive structure. Follow these instructions carefully:
 
@@ -77,10 +78,12 @@ Maintain logical coherence and proper structure in your output.
 Ensure there is no loss of critical information during the aggregation.
 Use Markdown for formatting your response.
 """
-#=======================
+# =======================
 # Classification Agent
-#=======================
-classification_prompt_file = "/home/abdullah/MAS_SLR/systemPrompt_classifier_agent.md"
+# =======================
+classification_prompt_file = (
+    "/home/zain/Desktop/LLM/GENAI-SLR-TOOL/systemPrompt_classifier_agent.md"
+)
 SYSTEM_PROMPT_CLS = None
 with open(classification_prompt_file, "r") as p_file:
     SYSTEM_PROMPT_CLS = "".join(p_file.readlines())

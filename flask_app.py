@@ -4,55 +4,84 @@ import os
 from main import demo_output, start_processing_SLR_pdf
 import markdown
 from personas import PERSONAS
+
 app = Flask(__name__)
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == 'POST':
-        paper_title = request.form.get('paper_title', '')
-        pdf_file = request.files.get('paper_pdf')
+    if request.method == "POST":
+        paper_title = request.form.get("paper_title", "")
+        pdf_file = request.files.get("paper_pdf")
         if pdf_file:
             filename = secure_filename(pdf_file.filename)
             saved_path = os.path.join(UPLOAD_FOLDER, filename)
             pdf_file.save(saved_path)
-            cls_results, formatted_result, raw_result = demo_output(saved_path, paper_title)
-            #cls_results, formatted_result, raw_result = start_processing_SLR_pdf(saved_path, paper_title)
-            
-            converted_evidence = markdown.markdown(
-                cls_results["Evidence"],
-                extensions=['extra','codehilite','toc','sane_lists','smarty','admonition','attr_list','footnotes','nl2br','wikilinks','meta']
-            )
-            classification_card = f"""
-                <div class="card classification-card">
-                    <p><strong>Identified Literature Review Type:</strong> {cls_results["Identified_Protocol"]}</p>
-                    <p><strong>Confidence Level:</strong> {cls_results["Confidence_Level"]}</p>
-                    <button class="btn-show-more" onclick="toggleVisibility(this, 'evidence')">
-                        <i class="fas fa-chevron-down me-2"></i>Show More
-                    </button>
-                    <div id="evidence" class="hidden" style="display: none;">
-                        <p><strong>Evidence:</strong></p>
-                        <div>{converted_evidence}</div>
-                    </div>
-                </div>
-            """
+            # cls_results, formatted_result, raw_result = demo_output(saved_path, paper_title)
+            raw_result = start_processing_SLR_pdf(saved_path, paper_title)
+            print(len(raw_result))
+
+            # converted_evidence = markdown.markdown(
+            #     cls_results["Evidence"],
+            #     extensions=['extra','codehilite','toc','sane_lists','smarty','admonition','attr_list','footnotes','nl2br','wikilinks','meta']
+            # )
+            # classification_card = f"""
+            #     <div class="card classification-card">
+            #         <p><strong>Identified Literature Review Type:</strong> {cls_results["Identified_Protocol"]}</p>
+            #         <p><strong>Confidence Level:</strong> {cls_results["Confidence_Level"]}</p>
+            #         <button class="btn-show-more" onclick="toggleVisibility(this, 'evidence')">
+            #             <i class="fas fa-chevron-down me-2"></i>Show More
+            #         </button>
+            #         <div id="evidence" class="hidden" style="display: none;">
+            #             <p><strong>Evidence:</strong></p>
+            #             <div>{converted_evidence}</div>
+            #         </div>
+            #     </div>
+            # """
 
             raw_cards = ""
-            for i in range(1, 5):
+            for i in range(1, 7):
                 if i in raw_result:
                     converted_overall = markdown.markdown(
                         raw_result[i]["overall_result"],
-                        extensions=['extra','codehilite','toc','sane_lists','smarty','admonition','attr_list','footnotes','nl2br','wikilinks','meta']
+                        extensions=[
+                            "extra",
+                            "codehilite",
+                            "toc",
+                            "sane_lists",
+                            "smarty",
+                            "admonition",
+                            "attr_list",
+                            "footnotes",
+                            "nl2br",
+                            "wikilinks",
+                            "meta",
+                        ],
                     )
                     converted_agents = [
                         markdown.markdown(
                             agent_res,
-                            extensions=['extra','codehilite','toc','sane_lists','smarty','admonition','attr_list','footnotes','nl2br','wikilinks','meta']
+                            extensions=[
+                                "extra",
+                                "codehilite",
+                                "toc",
+                                "sane_lists",
+                                "smarty",
+                                "admonition",
+                                "attr_list",
+                                "footnotes",
+                                "nl2br",
+                                "wikilinks",
+                                "meta",
+                            ],
                         )
                         for agent_res in raw_result[i]["per_agent_result"]
                     ]
-                    descriptions = [wf_persona["Workforce_description"] for wf_persona in PERSONAS]
+                    descriptions = [
+                        wf_persona["Workforce_description"] for wf_persona in PERSONAS
+                    ]
                     card = f"""
                         <div class="card raw-card">
                             <h1 class="workforce-heading">{descriptions[i-1]}</h1>
@@ -148,7 +177,7 @@ def index():
             </head>
             <body>
                 <h2>Classification Results</h2>
-                {classification_card}
+                classification_card
                 <h2>Raw Results</h2>
                 {raw_cards}
 
@@ -158,9 +187,9 @@ def index():
             </body>
             </html>
             """
-            return render_template_string(final_output, cls_results=cls_results, raw_result=raw_result)
+            return render_template_string(final_output, raw_result=raw_result)
     # GET request: Show upload form
-    return '''
+    return """
     <html>
     <head>
         <title>Upload Paper</title>
@@ -232,6 +261,8 @@ def index():
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
     </html>
-    '''
-if __name__ == '__main__':
+    """
+
+
+if __name__ == "__main__":
     app.run(debug=True)
