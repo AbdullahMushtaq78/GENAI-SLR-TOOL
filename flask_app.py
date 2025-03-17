@@ -3,49 +3,76 @@ from werkzeug.utils import secure_filename
 import os
 from main import demo_output, start_processing_SLR_pdf
 import markdown
-from personas import PERSONAS
+from personas import PERSONAS, roles
 
 app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+RESULTS_FOLDER = os.path.join(os.path.dirname(__file__), "results")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(RESULTS_FOLDER, exist_ok=True)
+
+PORT = 5001
+
+
+def get_unique_filename(base_path, filename):
+    """Generate unique filename by adding number suffix if file exists"""
+    name, ext = os.path.splitext(filename)
+    counter = 1
+    new_path = os.path.join(base_path, filename)
+
+    while os.path.exists(new_path):
+        new_filename = f"{name}_{counter}{ext}"
+        new_path = os.path.join(base_path, new_filename)
+        counter += 1
+
+    return new_path
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        paper_title = request.form.get("paper_title", "")
-        pdf_file = request.files.get("paper_pdf")
-        if pdf_file:
-            filename = secure_filename(pdf_file.filename)
-            saved_path = os.path.join(UPLOAD_FOLDER, filename)
-            pdf_file.save(saved_path)
-            # cls_results, formatted_result, raw_result = demo_output(saved_path, paper_title)
-            raw_result = start_processing_SLR_pdf(saved_path, paper_title)
-            print(len(raw_result))
+        try:
+            paper_title = request.form.get("paper_title", "").strip()
+            pdf_file = request.files.get("paper_pdf")
 
-            # converted_evidence = markdown.markdown(
-            #     cls_results["Evidence"],
-            #     extensions=['extra','codehilite','toc','sane_lists','smarty','admonition','attr_list','footnotes','nl2br','wikilinks','meta']
-            # )
-            # classification_card = f"""
-            #     <div class="card classification-card">
-            #         <p><strong>Identified Literature Review Type:</strong> {cls_results["Identified_Protocol"]}</p>
-            #         <p><strong>Confidence Level:</strong> {cls_results["Confidence_Level"]}</p>
-            #         <button class="btn-show-more" onclick="toggleVisibility(this, 'evidence')">
-            #             <i class="fas fa-chevron-down me-2"></i>Show More
-            #         </button>
-            #         <div id="evidence" class="hidden" style="display: none;">
-            #             <p><strong>Evidence:</strong></p>
-            #             <div>{converted_evidence}</div>
-            #         </div>
-            #     </div>
-            # """
+            if not pdf_file or not paper_title:
+                return "Please provide both paper title and PDF file", 400
+
+            # Save PDF with paper title as filename
+            pdf_filename = secure_filename(f"{paper_title}.pdf")
+            pdf_path = get_unique_filename(UPLOAD_FOLDER, pdf_filename)
+            pdf_file.save(pdf_path)
+
+            try:
+                # Process the PDF
+                raw_result = start_processing_SLR_pdf(pdf_path, paper_title)
+                if not raw_result:
+                    raise ValueError("No results returned from PDF processing.")
+                print(f"Processing complete. Results length: {len(raw_result)}")
+
+                # Save results to a file in the results folder
+                results_filename = secure_filename(f"{paper_title}_results.txt")
+                results_path = os.path.join(RESULTS_FOLDER, results_filename)
+                with open(results_path, "w") as results_file:
+                    results_file.write(
+                        str(raw_result)
+                    )  # Save raw_result or formatted_result as needed
+                print(f"Results saved to {results_path}")
+            except Exception as e:
+                print(f"Error processing PDF: {str(e)}")
+                return f"Error processing PDF: {str(e)}", 500
 
             raw_cards = ""
             for i in range(1, 7):
                 if i in raw_result:
+                    # Format the overall result to include headings and bold scores
+                    result_text = raw_result[i]["overall_result"]
+                    # Add bold to scores (e.g., "Score: 4/5" becomes "Score: **4/5**")
+                    result_text = result_text.replace("Score: ", "Score: **")
+                    result_text = result_text.replace("/5", "/5**")
+
                     converted_overall = markdown.markdown(
-                        raw_result[i]["overall_result"],
+                        result_text,
                         extensions=[
                             "extra",
                             "codehilite",
@@ -79,190 +106,497 @@ def index():
                         )
                         for agent_res in raw_result[i]["per_agent_result"]
                     ]
+
+                    # Generate agent details sections
+                    agent_sections = ""
+                    for idx, agent_result in enumerate(
+                        raw_result[i]["per_agent_result"]
+                    ):
+                        agent_id = f"agent_{i}_{idx}"
+
+                        # Get the agent name from the roles dictionary
+                        agent_name = (
+                            roles[str(i)][idx]
+                            if str(i) in roles and idx < len(roles[str(i)])
+                            else f"Agent {idx + 1}"
+                        )
+
+                        agent_content = markdown.markdown(
+                            agent_result,
+                            extensions=[
+                                "extra",
+                                "codehilite",
+                                "toc",
+                                "sane_lists",
+                                "smarty",
+                                "admonition",
+                                "attr_list",
+                                "footnotes",
+                                "nl2br",
+                                "wikilinks",
+                                "meta",
+                            ],
+                        )
+
+                        agent_sections += f"""
+                            <div class="agent-section">
+                                <button class="btn-show-agent" onclick="toggleVisibility(this, '{agent_id}')">
+                                    <i class="fas fa-chevron-down me-2"></i>{idx + 1}. {agent_name}
+                                </button>
+                                <div id="{agent_id}" class="hidden agent-details" style="display: none;">
+                                    <div class="detail-item">{agent_content}</div>
+                                </div>
+                            </div>
+                        """
+
                     descriptions = [
                         wf_persona["Workforce_description"] for wf_persona in PERSONAS
                     ]
                     card = f"""
                         <div class="card raw-card">
                             <h1 class="workforce-heading">{descriptions[i-1]}</h1>
-                            <p><strong>Overall Result:</strong></p>
-                            <div>{converted_overall}</div>
+                            <div class="result-section">
+                                <h3 class="section-heading">Overall Assessment</h3>
+                                <div class="result-content">{converted_overall}</div>
+                            </div>
                             <button class="btn-show-more" onclick="toggleVisibility(this, 'agent_list_{i}')">
-                                <i class="fas fa-chevron-down me-2"></i>See More
+                                <i class="fas fa-chevron-down me-2"></i>Show More
                             </button>
-                            <div id="agent_list_{i}" class="hidden" style="display: none;">
-                                <p><strong>Detailed Agents Result:</strong></p>
-                                <ul>
-                                    {''.join(f"<li>{a}</li>" for a in converted_agents)}
-                                </ul>
+                            <div id="agent_list_{i}" class="hidden agents-list" style="display: none;">
+                                {agent_sections}
                             </div>
                         </div>
                     """
                     raw_cards += card
 
             final_output = f"""
+            <!DOCTYPE html>
             <html>
             <head>
-                <title> MAS-SLR Demo </title>
+                <title>SLR Evaluation Results</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                 <style>
-                    .card {{ border: 1px solid #ccc; padding: 20px; margin-bottom: 10px; margin-left:150px; margin-right:150px; border-radius:10px; }}
-                    .hidden {{ display: none; }}
-                    button {{ margin-top: 5px; }}
-                    .classification-card {{
-                        background: linear-gradient(135deg, #86d180, #b9f7ff);
+                    * {{
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                        font-family: 'Inter', sans-serif;
                     }}
-                    .raw-card {{
-                        background: linear-gradient(135deg, #ADD8E6, #E0FFFF);
+                    
+                    body {{
+                        background-color: #f0f4f8;
+                        color: #2d3748;
+                        line-height: 1.6;
+                        padding: 2rem;
                     }}
-                    .btn-show-more {{
-                        background-color: #17a2b8;
-                        color: #fff;
-                        border: none;
-                        border-radius: 5px;
-                        padding: 5px 10px;
-                        cursor: pointer;
+                    
+                    .container {{
+                        max-width: 1200px;
+                        margin: 0 auto;
                     }}
-                    .btn-show-more:hover {{
-                        background-color: #138496;
-                    }}
+                    
                     h2 {{
+                        color: #1a365d;
+                        margin: 2rem 0;
+                        font-weight: 600;
                         text-align: center;
                     }}
+                    
+                    .card {{
+                        background: white;
+                        border-radius: 12px;
+                        padding: 1.25rem;
+                        margin-bottom: 1rem;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }}
+                    
                     .workforce-heading {{
-                        text-align: center; /* Center align Workforce headings */
+                        color: #2b6cb0;
+                        font-size: 1.25rem;
+                        margin-bottom: 0.75rem;
+                        padding-bottom: 0.5rem;
+                        border-bottom: 1px solid #e2e8f0;
                     }}
-                    a {{
-                        display: block;
-                        text-align: center;
-                        margin-top: 20px;
-                        color: #007bff;
+                    
+                    .section-heading {{
+                        color: #2c5282;
+                        font-size: 1.1rem;
+                        margin-bottom: 0.5rem;
                     }}
-                    a:hover {{
-                        color: #0056b3;
+                    
+                    .result-section {{
+                        background: #f8fafc;
+                        padding: 1rem;
+                        border-radius: 8px;
+                        margin-bottom: 0.75rem;
                     }}
+                    
+                    .result-content {{
+                        line-height: 1.4;
+                    }}
+                    
+                    .result-content p {{
+                        margin: 0.5rem 0;
+                    }}
+                    
+                    .result-content p:first-child {{
+                        margin-top: 0;
+                    }}
+                    
+                    .result-content p:last-child {{
+                        margin-bottom: 0;
+                    }}
+                    
+                    .btn-show-more, .btn-show-agent {{
+                        background-color: #3182ce;
+                        color: white;
+                        border: none;
+                        padding: 0.5rem 1rem;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.875rem;
+                        transition: all 0.2s ease;
+                        margin: 0.5rem 0;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        width: fit-content;
+                    }}
+                    
+                    .btn-show-agent {{
+                        background-color: #4a5568;
+                        font-size: 0.9rem;
+                        padding: 0.75rem 1.2rem;
+                        width: 100%;
+                        text-align: left;
+                        border-radius: 8px;
+                        transition: all 0.2s ease;
+                        margin-bottom: 0.5rem;
+                        white-space: normal;
+                        line-height: 1.4;
+                    }}
+                    
+                    .btn-show-more:hover, .btn-show-agent:hover {{
+                        transform: translateY(-1px);
+                        background-color: #2d3748;
+                    }}
+                    
+                    .agent-section {{
+                        background: #f8fafc;
+                        padding: 0.75rem;
+                        border-radius: 8px;
+                    }}
+                    
+                    .agent-details {{
+                        margin-top: 1rem;
+                        padding: 0.5rem;
+                    }}
+                    
+                    .agent-details .detail-item {{
+                        background: white;
+                        padding: 1.5rem;
+                        border-radius: 8px;
+                        border-left: 4px solid #3182ce;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                    }}
+                    
+                    .hidden {{
+                        display: none;
+                        margin-top: 0.75rem;
+                    }}
+                    
+                    .agents-list {{
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.5rem;
+                    }}
+                    
+                    .detail-item {{
+                        background: white;
+                        padding: 1rem;
+                        border-radius: 8px;
+                        border-left: 3px solid #3182ce;
+                        margin-top: 0.5rem;
+                    }}
+                    
+                    .detail-item p {{
+                        margin: 0.5rem 0;
+                    }}
+                    
                     .btn-go-back {{
-                        display: inline-flex;
+                        position: fixed;
+                        bottom: 2rem;
+                        left: 2rem;
+                        background-color: #3182ce;
+                        color: white;
+                        width: 3.5rem;
+                        height: 3.5rem;
+                        border-radius: 50%;
+                        display: flex;
                         align-items: center;
                         justify-content: center;
-                        background-color: #d2b48c; /* Slight brown */
-                        color: #fff;
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 20%;
                         text-decoration: none;
-                        transition: background-color 0.3s ease;
-                        position: fixed;
-                        bottom: 20px;
-                        left: 20px;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        transition: all 0.2s ease;
                     }}
+                    
                     .btn-go-back:hover {{
-                        background-color: #c19a6b; /* Darker brown on hover */
+                        transform: scale(1.1);
+                        background-color: #2c5282;
                     }}
-                    .btn-go-back i {{
-                        font-size: 16px;
+                    
+                    strong {{
+                        color: #2c5282;
                     }}
-                </style>
-                <script>
-                    function toggleVisibility(btn, id) {{
-                        const x = document.getElementById(id);
-                        if (x.style.display === "none" || x.style.display === "") {{
-                            x.style.display = "block";
-                            btn.innerHTML = '<i class="fas fa-chevron-up me-2"></i>Show Less';
-                        }} else {{
-                            x.style.display = "none";
-                            btn.innerHTML = '<i class="fas fa-chevron-down me-2"></i>Show More';
+                    
+                    /* Style for scores */
+                    p strong {{
+                        color: #2b6cb0;
+                        font-size: 1em;
+                    }}
+                    
+                    /* Responsive adjustments */
+                    @media (max-width: 768px) {{
+                        body {{
+                            padding: 0.75rem;
+                        }}
+                        
+                        .card {{
+                            padding: 1rem;
+                        }}
+                        
+                        .result-section,
+                        .detail-item {{
+                            padding: 0.75rem;
                         }}
                     }}
-                </script>
+                    
+                    .main-header {{
+                        text-align: center;
+                        padding: 2rem 0;
+                        background: linear-gradient(135deg, #2c5282, #3182ce);
+                        color: white;
+                        margin-bottom: 2rem;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }}
+                    
+                    .main-header h1 {{
+                        font-size: 2rem;
+                        margin-bottom: 0.5rem;
+                    }}
+                    
+                    .main-header p {{
+                        font-size: 1.1rem;
+                        opacity: 0.9;
+                    }}
+                    
+                    .agent-name {{
+                        color: #2b6cb0;
+                        font-size: 1.2rem;
+                        margin-bottom: 1rem;
+                        padding-bottom: 0.5rem;
+                        border-bottom: 1px solid #e2e8f0;
+                    }}
+                </style>
             </head>
             <body>
-                <h2>Classification Results</h2>
-                classification_card
-                <h2>Raw Results</h2>
+                <div class="container">
+                    <div class="main-header">
+                        <h1>SLR Paper Evaluator using LLMs</h1>
+                        <p>Automated Systematic Literature Review Analysis Tool</p>
+                    </div>
+                    <h2>Analysis Results for "{paper_title}"</h2>
                 {raw_cards}
+                </div>
 
                 <a href="/" class="btn-go-back" title="Go Back">
-                    <p class="" style="color:#0000; padding:5px;">Go Back</i>
+                    <i class="fas fa-arrow-left"></i>
                 </a>
+                
+                <script>
+                    function toggleVisibility(btn, id) {{
+                        const content = document.getElementById(id);
+                        const isHidden = content.style.display === "none" || content.style.display === "";
+                        const icon = btn.querySelector('i');
+                        
+                        content.style.display = isHidden ? "block" : "none";
+                        icon.className = isHidden ? "fas fa-chevron-up me-2" : "fas fa-chevron-down me-2";
+                    }}
+                </script>
             </body>
             </html>
             """
             return render_template_string(final_output, raw_result=raw_result)
+
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
+            return f"An unexpected error occurred: {str(e)}", 500
+
     # GET request: Show upload form
+    return render_upload_form()
+
+
+def render_upload_form():
+    # This function returns the HTML for the upload form
     return """
+    <!DOCTYPE html>
     <html>
     <head>
-        <title>Upload Paper</title>
-        <!-- Include Bootstrap CSS and optional Font Awesome -->
-        <link rel="stylesheet"
-              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-        <!-- Updated Font Awesome CDN to a stable version -->
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <title>MAS-SLR Analysis</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
-            html, body {
-                height: 100%;
+            * {
                 margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Inter', sans-serif;
             }
+            
             body {
+                min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: #f8f9fa; /* Reverted to a neutral background */
+                background: linear-gradient(135deg, #f6f9fc, #edf2f7);
+                padding: 2rem;
             }
+            
             .container {
-                max-width: 500px;
-                padding: 30px;
-                /* Gradient background for the form section only */
-                background: linear-gradient(135deg, #FFA07A, #FFDAB9);
+                width: 100%;
+                max-width: 480px;
+                background: white;
+                padding: 2rem;
+                border-radius: 16px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            }
+            
+            h1 {
+                color: #2d3748;
+                margin-bottom: 2rem;
+                text-align: center;
+                font-weight: 600;
+            }
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: #4a5568;
+                font-weight: 500;
+            }
+            
+            input[type="text"],
+            input[type="file"] {
+                width: 100%;
+                padding: 0.75rem;
+                border: 2px solid #e2e8f0;
                 border-radius: 8px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                font-size: 1rem;
+                transition: border-color 0.2s ease;
             }
-            h1, h2, label {
-                color: #333;
+            
+            input[type="text"]:focus,
+            input[type="file"]:focus {
+                outline: none;
+                border-color: #4299e1;
             }
-            .btn-custom {
-                background-color: #007bff;
-                color: #fff;
+            
+            .file-input-wrapper {
+                position: relative;
+                margin-top: 0.5rem;
             }
-            .btn-custom:hover {
-                background-color: #0056b3;
-                color: #fff;
+            
+            .file-input-wrapper input[type="file"] {
+                cursor: pointer;
             }
-            .form-label {
-                margin-top: 15px;
+            
+            button[type="submit"] {
+                width: 100%;
+                padding: 0.75rem;
+                background-color: #4299e1;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            
+            button[type="submit"]:hover {
+                background-color: #3182ce;
+            }
+
+            /* Disabled button styles */
+            button[type="submit"]:disabled {
+                background-color: #b0c4de; /* Light gray color */
+                cursor: not-allowed; /* Change cursor to indicate it's disabled */
+                opacity: 0.6; /* Make it look faded */
+            }
+
+            /* Loading indicator styles */
+            #loading {
+                display: none; /* Hidden by default */
+                text-align: center;
+                margin-top: 20px;
             }
         </style>
+        <script>
+            function showLoading() {
+                document.getElementById('loading').style.display = 'block'; // Show loading indicator
+                document.querySelector('button[type="submit"]').disabled = true; // Disable the submit button
+            }
+        </script>
     </head>
     <body>
         <div class="container">
-            <h1 class="mb-4 text-center">Upload Paper</h1>
-            <form method="POST" enctype="multipart/form-data" class="row g-3">
-                <div class="col-12">
-                    <label for="paper_title" class="form-label">
-                        <i class="fas fa-text-height me-2"></i>Paper Title
+            <h1>MAS-SLR Analysis</h1>
+            <form method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+                <div class="form-group">
+                    <label for="paper_title">
+                        <i class="fas fa-heading icon"></i>Paper Title
                     </label>
-                    <input type="text" id="paper_title" name="paper_title" class="form-control" placeholder="Enter paper title"/>
+                    <input type="text" 
+                           id="paper_title" 
+                           name="paper_title" 
+                           placeholder="Enter the title of your paper"
+                           required>
                 </div>
-                <div class="col-12">
-                    <label for="paper_pdf" class="form-label">
-                        <i class="fas fa-file-pdf me-2"></i>Paper PDF
+                
+                <div class="form-group">
+                    <label for="paper_pdf">
+                        <i class="fas fa-file-pdf icon"></i>Upload PDF
                     </label>
-                    <input type="file" id="paper_pdf" name="paper_pdf" accept=".pdf" class="form-control"/>
+                    <div class="file-input-wrapper">
+                        <input type="file" 
+                               id="paper_pdf" 
+                               name="paper_pdf" 
+                               accept=".pdf"
+                               required>
+                    </div>
                 </div>
-                <div class="col-12 text-center mt-4">
-                    <button type="submit" class="btn btn-custom">
-                        <i class="fas fa-upload"></i> Submit
-                    </button>
-                </div>
+                
+                <button type="submit">
+                    <i class="fas fa-upload"></i>
+                    Analyze Paper
+                </button>
             </form>
+            <div id="loading">
+                <p>Processing your request, please wait...</p>
+                <i class="fas fa-spinner fa-spin"></i> <!-- Optional spinner icon -->
+            </div>
         </div>
-        <!-- Optionally include Bootstrap JS for any interactive components -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
     </html>
     """
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=PORT)

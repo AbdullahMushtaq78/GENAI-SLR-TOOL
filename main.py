@@ -15,7 +15,11 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
     # protocol_agent = Protocol_Classification_Agent()
     paper_divison_agent = Paper_Division_Agent()
     # ocr = extract_pdf_OCR2(PAPER_PATH)
+
     ocr = extract_content(path=PAPER_PATH)
+    with open("temp_data.txt", "w") as file:
+        file.writelines(ocr)
+
     # with open("/home/abdullah/MAS_SLR/sample_data/ocr.txt", "r") as f:
     #     ocr = "".join(f.readlines())
     # classification_results = protocol_agent.classify(ocr)

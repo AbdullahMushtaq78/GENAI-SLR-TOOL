@@ -3,7 +3,7 @@ from camel.agents import CriticAgent, ChatAgent
 from camel.messages import BaseMessage
 from camel.models import ModelFactory
 from camel.types import ModelPlatformType, ModelType
-from camel.configs import ChatGPTConfig
+from camel.configs import ChatGPTConfig, AnthropicConfig
 from camel.societies.workforce import Workforce
 from camel.tasks import Task
 from personas import *
@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PLATFORM = ModelPlatformType.OPENAI
-MODEL = ModelType.GPT_4O_MINI
+MODEL = ModelType.GPT_4O
 TEMPERATURE = 0.0
 MESSAGES_WINDOW = 10
 TOOLS = []

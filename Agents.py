@@ -17,18 +17,20 @@ def create_agent(name: str, role: str, persona: str) -> CriticAgent:
 def create_workforce(wf_description, agents_names, agents_roles, agents_personas) ->Workforce:
     wf = Workforce(description=wf_description)
     for name, (role, persona) in zip(agents_names, zip(agents_roles, agents_personas)):
-        wf.add_single_agent_worker(worker=create_agent(name, role, persona), description=f"{name} - {role}")
+        wf.add_single_agent_worker(
+            worker=create_agent(name, role, persona), description=f"{name} - {role}"
+        )
     return wf
 
-def create_all_workforces() ->list[Workforce]:
+
+def create_all_workforces() -> list[Workforce]:
     workforces = []
     for wf_details in PERSONAS:
         wf = create_workforce(
-            wf_description = wf_details["Workforce_description"],
-            agents_names = [agent["Agent_Name"] for agent in wf_details["Agents"]],
-            agents_roles = [agent["Agent_Role"] for agent in wf_details["Agents"]],
-            agents_personas = [agent["Persona"] for agent in wf_details["Agents"]]
+            wf_description=wf_details["Workforce_description"],
+            agents_names=[agent["Agent_Name"] for agent in wf_details["Agents"]],
+            agents_roles=[agent["Agent_Role"] for agent in wf_details["Agents"]],
+            agents_personas=[agent["Persona"] for agent in wf_details["Agents"]],
         )
         workforces.append(wf)
     return workforces
-
