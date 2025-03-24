@@ -6,6 +6,8 @@ from camel.types import ModelPlatformType, ModelType
 from camel.configs import ChatGPTConfig
 from camel.societies.workforce import Workforce
 from camel.tasks import Task
+from camel.toolkits import FunctionTool, SearchToolkit, ArxivToolkit
+
 from personas import *
 from typing import List
 from dotenv import load_dotenv
@@ -15,8 +17,22 @@ load_dotenv()
 PLATFORM = ModelPlatformType.OPENAI
 MODEL = ModelType.GPT_4O_MINI
 TEMPERATURE = 0.0
-MESSAGES_WINDOW = 10
-TOOLS = []
+MESSAGES_WINDOW = 50
+
+
+
+# =======================
+#          TOOLS
+# =======================
+TOOLS = [*ArxivToolkit().get_tools()]
+arxiv_tool_prompt = """You have access to ArXiv to search for the latest research papers when needed. Use it only when relevant to the task.
+If an SLR paper is provided, check its references and look for updated versions on ArXiv.
+Use ArXiv to find recent and reliable information when accuracy is important.
+Cross-check findings with the latest papers to ensure the information is up to date.
+Use this tool wisely to provide well-researched and accurate responses.
+"""
+
+TOOLS_PROMPT = arxiv_tool_prompt
 
 
 # =======================
@@ -87,3 +103,4 @@ classification_prompt_file = (
 SYSTEM_PROMPT_CLS = None
 with open(classification_prompt_file, "r") as p_file:
     SYSTEM_PROMPT_CLS = "".join(p_file.readlines())
+

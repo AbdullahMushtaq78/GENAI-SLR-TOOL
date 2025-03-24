@@ -1,17 +1,22 @@
 from configs import *
 def create_agent(name: str, role: str, persona: str) -> CriticAgent:
     name = name.replace("_", " ")
+    persona = persona + TOOLS_PROMPT
     base_msg = f"# You are a helpful assistant\n # Your name is: {name}.\n # You are a {role}.\n # And here is your persona that you must act with: {persona}"
     model_configs = ChatGPTConfig(
         temperature=TEMPERATURE,
-        tools = TOOLS
     )
     model = ModelFactory.create(
         model_platform = PLATFORM,
         model_type= MODEL,
         model_config_dict= model_configs.as_dict()
     )
-    agent = CriticAgent(BaseMessage.make_assistant_message(role_name=role, content=base_msg), model=model, message_window_size=MESSAGES_WINDOW)
+    agent = ChatAgent(
+        system_message=BaseMessage.make_assistant_message(role_name=role, content=base_msg),
+        model=model,
+        message_window_size=MESSAGES_WINDOW,
+        tools= TOOLS
+    )
     return agent
 
 def create_workforce(wf_description, agents_names, agents_roles, agents_personas) ->Workforce:
