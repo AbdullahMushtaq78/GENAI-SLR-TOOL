@@ -19,8 +19,8 @@ def index():
             filename = secure_filename(pdf_file.filename)
             saved_path = os.path.join(UPLOAD_FOLDER, filename)
             pdf_file.save(saved_path)
-            # cls_results, formatted_result, raw_result = demo_output(saved_path, paper_title)
-            raw_result = start_processing_SLR_pdf(saved_path, paper_title)
+            cls_results, formatted_result, raw_result = demo_output(saved_path, paper_title)
+            #raw_result = start_processing_SLR_pdf(saved_path, paper_title)
             print(len(raw_result))
 
             # converted_evidence = markdown.markdown(

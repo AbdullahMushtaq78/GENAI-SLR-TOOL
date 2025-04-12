@@ -4,6 +4,7 @@ from .methods_society import METHODS_SOCIETY
 from .results_society import RESULTS_SOCIETY
 from .discussion_society import DISCUSSION_SOCIETY
 from .other_info_society import OTHER_INFO_SOCIETY
+from .SLR_GPT import SLR_GPT_PERSONA as SLR_GPT_PERSONA
 
 PERSONAS = [
     TITLE_AND_ABSTRACT_SOCIETY,

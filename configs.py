@@ -19,6 +19,15 @@ MODEL = ModelType.GPT_4O_MINI
 TEMPERATURE = 0.0
 MESSAGES_WINDOW = 50
 
+# =======================
+#          TOOLS
+# =======================
+SLR_GPT_PLATFORM = ModelPlatformType.OPENAI
+SLR_GPT_MODEL = ModelType.GPT_4_5_PREVIEW
+SLR_GPT_TEMPERATURE = 0.0
+SLR_GPT_MESSAGES_WINDOW = 100
+
+
 
 
 # =======================
@@ -97,10 +106,10 @@ Use Markdown for formatting your response.
 # =======================
 # Classification Agent
 # =======================
-classification_prompt_file = (
-    "/home/zain/Desktop/LLM/GENAI-SLR-TOOL/systemPrompt_classifier_agent.md"
-)
-SYSTEM_PROMPT_CLS = None
-with open(classification_prompt_file, "r") as p_file:
-    SYSTEM_PROMPT_CLS = "".join(p_file.readlines())
+# classification_prompt_file = (
+#     "/home/zain/Desktop/LLM/GENAI-SLR-TOOL/systemPrompt_classifier_agent.md"
+# )
+# SYSTEM_PROMPT_CLS = None
+# with open(classification_prompt_file, "r") as p_file:
+#     SYSTEM_PROMPT_CLS = "".join(p_file.readlines())
 
