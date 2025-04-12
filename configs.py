@@ -35,10 +35,9 @@ SLR_GPT_MESSAGES_WINDOW = 100
 # =======================
 TOOLS = [*ArxivToolkit().get_tools()]
 arxiv_tool_prompt = """You have access to ArXiv to search for the latest research papers when needed. Use it only when relevant to the task.
-If an SLR paper is provided, check its references and look for updated versions on ArXiv.
 Use ArXiv to find recent and reliable information when accuracy is important.
-Cross-check findings with the latest papers to ensure the information is up to date.
 Use this tool wisely to provide well-researched and accurate responses.
+Do not search the exact same paper provided to you from the user. Use the paper provided by the user as it is to ground your response. You can use this toolkit to search for other papers related to the topic of the paper provided by the user (if necessary). 
 """
 
 TOOLS_PROMPT = arxiv_tool_prompt

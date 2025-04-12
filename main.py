@@ -23,7 +23,7 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
     # pdf_content = paper_divison_agent.extract_sections(ocr)
     # grouped_sections = paper_divison_agent.group_sections(pdf_content)
     wf_index = 1
-    workforces = create_all_workforces()
+    workforces = create_all_workforces(Paper_ocr=ocr)
     results = {}
     for wf in workforces:
         wf_task = WorkForce_task(
@@ -56,7 +56,7 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
         r_file.writelines(str(results))
     # with open("cls_result.txt", 'w') as r_file:
     #     r_file.writelines(str(classification_results))
-    return results
+    return results, ocr
 
 
 def demo_output(paper_path: str, paper_title: str):
@@ -76,9 +76,11 @@ def demo_output(paper_path: str, paper_title: str):
         cls_results = eval("".join(file.readlines()))
     with open("formatted_result.txt", "r") as file:
         formatted_result = eval("".join(file.readlines()))
-    with open("result.txt", "r") as file:
+    with open("results/The_association_between_gestational_diabetes_and_ASD_and_ADHD_a_systematic_review_and_metaanalysis_results.txt", "r") as file:
         result = eval("".join(file.readlines()))
-    return cls_results, formatted_result, result
+    with open("./sample_data/ocr.txt", "r") as file:
+        ocr = "".join(file.readlines())
+    return cls_results, formatted_result, result, ocr
     return (
         convert_keys_to_str_recursive(cls_results),
         convert_keys_to_str_recursive(formatted_result),
