@@ -45,8 +45,8 @@ def index():
 
             try:
                 # Process the PDF
-                _,_, raw_result, ocr = demo_output(pdf_path, paper_title)
-                #raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
+                #_,_, raw_result, ocr = demo_output(pdf_path, paper_title)
+                raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
                 if not raw_result:
                     raise ValueError("No results returned from PDF processing.")
                 print(f"Processing complete. Results length: {len(raw_result)}")

@@ -20,7 +20,7 @@ TEMPERATURE = 0.0
 MESSAGES_WINDOW = 50
 
 # =======================
-#          TOOLS
+#         SLR-GPT
 # =======================
 SLR_GPT_PLATFORM = ModelPlatformType.OPENAI
 SLR_GPT_MODEL = ModelType.GPT_4_5_PREVIEW
@@ -102,13 +102,4 @@ Maintain logical coherence and proper structure in your output.
 Ensure there is no loss of critical information during the aggregation.
 Use Markdown for formatting your response.
 """
-# =======================
-# Classification Agent
-# =======================
-# classification_prompt_file = (
-#     "/home/zain/Desktop/LLM/GENAI-SLR-TOOL/systemPrompt_classifier_agent.md"
-# )
-# SYSTEM_PROMPT_CLS = None
-# with open(classification_prompt_file, "r") as p_file:
-#     SYSTEM_PROMPT_CLS = "".join(p_file.readlines())
 

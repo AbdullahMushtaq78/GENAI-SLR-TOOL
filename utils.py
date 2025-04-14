@@ -68,10 +68,12 @@ def WorkForce_task(paper_title: str, id: str, complete_paper=None) -> Task:
         id=id,
         # Here's the content relevant to your tasks: {task_content}.
         content=f"""
-        # Paper Title: {paper_title} \n
-        Extract the content from the paper that is related to the task assigned to you.
-        Here is the complete paper : {complete_paper}
-        Generate the output exactly as following:
+
+        #### Paper Title: {paper_title} \n
+        - The agents are required to evaluate the paper based on their personas and roles. 
+        - Complete paper text is already provided to all agents, just assign them their tasks based on their roles and get their output.
+        
+        #### After collecting output of all the agents, generate and format the output exactly as following:
         
         ## Overall Score: X/5
         ---
@@ -83,10 +85,10 @@ def WorkForce_task(paper_title: str, id: str, complete_paper=None) -> Task:
         ---
         
         Replace "Y" with the actual score given by that agent. Replace "..." with the actual feedback provided by the agent.
-        And replace "X" with the overall mean score calculated based on the individual scores provided by the agents.
+        And replace "X" with the overall mean score calculated based on the individual scores provided by the agents. Make sure averaged score provided by you is precise.
         """,
         # additional_info= f"## Here's the complete paper text: ---\n{complete_paper}\n---"
         additional_info=(
-            f"## Make sure to exract the correct section of the paper that is relevent to your task"
+            f"Follow the output format exactly as it is and make sure the averaged score for all the agents is precise and accurate!"
         ),
     )

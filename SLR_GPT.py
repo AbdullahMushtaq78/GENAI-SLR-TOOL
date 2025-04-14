@@ -44,8 +44,7 @@ def SLR_GPT_Agent(full_paper_text:str, societies_output:str)->ChatAgent:
             model = ModelFactory.create(
                 model_platform = SLR_GPT_PLATFORM,
                 model_type = SLR_GPT_MODEL,
-                model_config_dict = ChatGPTConfig(
-                    temperature = SLR_GPT_TEMPERATURE).as_dict()
+                model_config_dict = ChatGPTConfig(temperature = SLR_GPT_TEMPERATURE).as_dict()
             ),
             message_window_size = SLR_GPT_MESSAGES_WINDOW,
             tools = TOOLS
