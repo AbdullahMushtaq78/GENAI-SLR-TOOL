@@ -57,7 +57,7 @@ You are operating inside an intelligent agent ecosystem designed to assist resea
 ---
 
 <SOCIETIES-OUTPUT>
-{societies_output}
+{society_outputs}
 </SOCIETIES-OUTPUT>
 
 """

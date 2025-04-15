@@ -31,7 +31,7 @@ def format_societies_output(societies_output):
     return formatted_output
 
     
-def SLR_GPT_Agent(full_paper_text:str, societies_output:str)->ChatAgent:
+def SLR_GPT_Agent(full_paper_text:str, societies_output)->ChatAgent:
     
     agent = ChatAgent(
             system_message = BaseMessage.make_assistant_message(

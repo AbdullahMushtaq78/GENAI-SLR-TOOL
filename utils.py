@@ -61,8 +61,8 @@ def extract_content(path: str) -> str:
 
 def WorkForce_task(paper_title: str, id: str, complete_paper=None) -> Task:
     local_roles = (
-        "\nScore:Y/5\Summarized Feedback:...\n\n".join(roles[id])
-        + "\nScore:Y/5\nSummarized Feedback:...\n\n"
+        "\n*Score:Y/5*\nSummarized Feedback:...\n\n".join([f"*{role}*" for role in roles[id]])
+        + "\n*Score:Y/5*\nSummarized Feedback:...\n\n"
     )
     return Task(
         id=id,

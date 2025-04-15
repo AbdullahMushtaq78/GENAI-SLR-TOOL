@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PLATFORM = ModelPlatformType.OPENAI
-MODEL = ModelType.GPT_4O_MINI
+MODEL = ModelType.GPT_4_1
 TEMPERATURE = 0.0
 MESSAGES_WINDOW = 50
 
@@ -23,7 +23,7 @@ MESSAGES_WINDOW = 50
 #         SLR-GPT
 # =======================
 SLR_GPT_PLATFORM = ModelPlatformType.OPENAI
-SLR_GPT_MODEL = ModelType.GPT_4_5_PREVIEW
+SLR_GPT_MODEL = ModelType.GPT_4_1
 SLR_GPT_TEMPERATURE = 0.0
 SLR_GPT_MESSAGES_WINDOW = 100
 

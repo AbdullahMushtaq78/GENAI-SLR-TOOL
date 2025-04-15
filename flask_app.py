@@ -4,6 +4,8 @@ import os
 from main import demo_output, start_processing_SLR_pdf
 import markdown
 from personas import PERSONAS, roles
+import re
+from SLR_GPT import SLR_GPT_Agent, SLR_GPT
 
 app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
@@ -12,6 +14,15 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULTS_FOLDER, exist_ok=True)
 
 PORT = 5001
+
+raw_result = None
+ocr = None
+
+# Import SLR_GPT functions
+
+
+# Initialize the chat agent
+chat_agent = None
 
 
 def get_unique_filename(base_path, filename):
@@ -45,8 +56,11 @@ def index():
 
             try:
                 # Process the PDF
-                #_,_, raw_result, ocr = demo_output(pdf_path, paper_title)
-                raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
+                global raw_result, ocr, chat_agent
+                raw_result, ocr = demo_output(pdf_path, paper_title)
+                chat_agent = SLR_GPT_Agent(ocr, raw_result)
+
+                # raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
                 if not raw_result:
                     raise ValueError("No results returned from PDF processing.")
                 print(f"Processing complete. Results length: {len(raw_result)}")
@@ -72,38 +86,93 @@ def index():
                     result_text = result_text.replace("Score: ", "Score: **")
                     result_text = result_text.replace("/5", "/5**")
 
+                    # Additional processing to add our custom class to scores
+                    # Instead of individual replacements, use a more general approach that works for all scores
+                    result_text = re.sub(r'\*\*([\d\.]+/5)\*\*', r'<strong class="score-value">\1</strong>', result_text)
+                    # Keep the old individual replacements as fallback just in case
+                    if "**" in result_text and "/5**" in result_text:
+                        result_text = result_text.replace("**4/5**", "<strong class='score-value'>4/5</strong>")
+                        result_text = result_text.replace("**3/5**", "<strong class='score-value'>3/5</strong>")
+                        result_text = result_text.replace("**5/5**", "<strong class='score-value'>5/5</strong>")
+                        result_text = result_text.replace("**2/5**", "<strong class='score-value'>2/5</strong>")
+                        result_text = result_text.replace("**1/5**", "<strong class='score-value'>1/5</strong>")
+
                     converted_overall = markdown.markdown(
                         result_text,
-                        extensions=[
-                            "extra",
-                            "codehilite",
-                            "toc",
-                            "sane_lists",
-                            "smarty",
-                            "admonition",
-                            "attr_list",
-                            "footnotes",
-                            "nl2br",
-                            "wikilinks",
-                            "meta",
-                        ],
+                        extensions=[    "abbr",
+                                        "attr_list",
+                                        "def_list",
+                                        "fenced_code",
+                                        "footnotes",
+                                        "tables",
+                                        "admonition",
+                                        "codehilite",
+                                        "meta",
+                                        "nl2br",
+                                        "sane_lists",
+                                        "smarty",
+                                        "toc",
+                                        "wikilinks",
+
+                                        "pymdownx.extra",
+                                        "pymdownx.emoji",
+                                        "pymdownx.tasklist",
+                                        "pymdownx.superfences",
+                                        "pymdownx.magiclink",
+                                        "pymdownx.highlight",
+                                        "pymdownx.keys",
+                                        "pymdownx.arithmatex",
+                                        "pymdownx.caret",
+                                        "pymdownx.mark",
+                                        "pymdownx.tilde",
+                                        "pymdownx.smartsymbols",
+                                        "pymdownx.betterem",
+                                        "pymdownx.escapeall",
+                                        "pymdownx.progressbar",
+                                        "pymdownx.inlinehilite",
+                                        "pymdownx.snippets",
+                                        "pymdownx.details",
+                                        "pymdownx.tabbed"
+                                    ],
                     )
                     converted_agents = [
                         markdown.markdown(
                             agent_res,
-                            extensions=[
-                                "extra",
-                                "codehilite",
-                                "toc",
-                                "sane_lists",
-                                "smarty",
-                                "admonition",
-                                "attr_list",
-                                "footnotes",
-                                "nl2br",
-                                "wikilinks",
-                                "meta",
-                            ],
+                            extensions=[    "abbr",
+                                        "attr_list",
+                                        "def_list",
+                                        "fenced_code",
+                                        "footnotes",
+                                        "tables",
+                                        "admonition",
+                                        "codehilite",
+                                        "meta",
+                                        "nl2br",
+                                        "sane_lists",
+                                        "smarty",
+                                        "toc",
+                                        "wikilinks",
+
+                                        "pymdownx.extra",
+                                        "pymdownx.emoji",
+                                        "pymdownx.tasklist",
+                                        "pymdownx.superfences",
+                                        "pymdownx.magiclink",
+                                        "pymdownx.highlight",
+                                        "pymdownx.keys",
+                                        "pymdownx.arithmatex",
+                                        "pymdownx.caret",
+                                        "pymdownx.mark",
+                                        "pymdownx.tilde",
+                                        "pymdownx.smartsymbols",
+                                        "pymdownx.betterem",
+                                        "pymdownx.escapeall",
+                                        "pymdownx.progressbar",
+                                        "pymdownx.inlinehilite",
+                                        "pymdownx.snippets",
+                                        "pymdownx.details",
+                                        "pymdownx.tabbed"
+                                    ],
                         )
                         for agent_res in raw_result[i]["per_agent_result"]
                     ]
@@ -124,28 +193,64 @@ def index():
 
                         agent_content = markdown.markdown(
                             agent_result,
-                            extensions=[
-                                "extra",
-                                "codehilite",
-                                "toc",
-                                "sane_lists",
-                                "smarty",
-                                "admonition",
-                                "attr_list",
-                                "footnotes",
-                                "nl2br",
-                                "wikilinks",
-                                "meta",
-                            ],
+                            extensions=[    "abbr",
+                                        "attr_list",
+                                        "def_list",
+                                        "fenced_code",
+                                        "footnotes",
+                                        "tables",
+                                        "admonition",
+                                        "codehilite",
+                                        "meta",
+                                        "nl2br",
+                                        "sane_lists",
+                                        "smarty",
+                                        "toc",
+                                        "wikilinks",
+
+                                        "pymdownx.extra",
+                                        "pymdownx.emoji",
+                                        "pymdownx.tasklist",
+                                        "pymdownx.superfences",
+                                        "pymdownx.magiclink",
+                                        "pymdownx.highlight",
+                                        "pymdownx.keys",
+                                        "pymdownx.arithmatex",
+                                        "pymdownx.caret",
+                                        "pymdownx.mark",
+                                        "pymdownx.tilde",
+                                        "pymdownx.smartsymbols",
+                                        "pymdownx.betterem",
+                                        "pymdownx.escapeall",
+                                        "pymdownx.progressbar",
+                                        "pymdownx.inlinehilite",
+                                        "pymdownx.snippets",
+                                        "pymdownx.details",
+                                        "pymdownx.tabbed"
+                                    ],
                         )
 
+                        # Define color class based on agent index
+                        agent_color_class = f"agent-color-{idx % 5}"
+                        
+                        # Define unique icon for each agent type
+                        agent_icons = [
+                            "fa-user-graduate",  # Scholar/academic icon
+                            "fa-chart-line",     # Data analyst icon
+                            "fa-search",         # Investigator icon
+                            "fa-clipboard-check", # Reviewer icon
+                            "fa-comments"        # Discussion icon
+                        ]
+                        agent_icon = agent_icons[idx % 5]
+
                         agent_sections += f"""
-                            <div class="agent-section">
-                                <button class="btn-show-agent" onclick="toggleVisibility(this, '{agent_id}')">
-                                    <i class="fas fa-chevron-down me-2"></i>{idx + 1}. {agent_name}
+                            <div class="agent-section {agent_color_class}">
+                                <button class="btn-show-agent {agent_color_class}" onclick="toggleVisibility(this, '{agent_id}')">
+                                    <i class="fas {agent_icon} me-2"></i>{idx + 1}. {agent_name}
+                                    <span class="expand-indicator"><i class="fas fa-chevron-down"></i></span>
                                 </button>
                                 <div id="{agent_id}" class="hidden agent-details" style="display: none;">
-                                    <div class="detail-item">{agent_content}</div>
+                                    <div class="detail-item {agent_color_class}">{agent_content}</div>
                                 </div>
                             </div>
                         """
@@ -161,7 +266,7 @@ def index():
                                 <div class="result-content">{converted_overall}</div>
                             </div>
                             <button class="btn-show-more" onclick="toggleVisibility(this, 'agent_list_{i}')">
-                                <i class="fas fa-chevron-down me-2"></i>Show More
+                                <i class="fas fa-chevron-down"></i>Show More
                             </button>
                             <div id="agent_list_{i}" class="hidden agents-list" style="display: none;">
                                 {agent_sections}
@@ -176,7 +281,7 @@ def index():
             <head>
                 <title>SLR Evaluation Results</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                 <style>
                     * {{
@@ -187,10 +292,57 @@ def index():
                     }}
                     
                     body {{
-                        background-color: #f0f4f8;
+                        background-color: #f8fafc;
                         color: #2d3748;
                         line-height: 1.6;
                         padding: 2rem;
+                        font-family: 'Inter', sans-serif;
+                        position: relative;
+                    }}
+                    
+                    body::before {{
+                        content: "";
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234299e1' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+                        opacity: 0.7;
+                        z-index: -1;
+                    }}
+                    
+                    /* Subtle gradient background */
+                    body::after {{
+                        content: "";
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+                        z-index: -2;
+                    }}
+                    
+                    /* Add subtle top and bottom page accents */
+                    .page-accent-top {{
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 5px;
+                        background: linear-gradient(90deg, #4299e1, #2c5282);
+                        z-index: 1000;
+                    }}
+                    
+                    .page-accent-bottom {{
+                        position: fixed;
+                        bottom: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 5px;
+                        background: linear-gradient(90deg, #2c5282, #4299e1);
+                        z-index: 1000;
                     }}
                     
                     .container {{
@@ -203,72 +355,525 @@ def index():
                         margin: 2rem 0;
                         font-weight: 600;
                         text-align: center;
+                        font-size: 1.75rem;
+                        letter-spacing: -0.01em;
                     }}
                     
                     .card {{
                         background: white;
                         border-radius: 12px;
-                        padding: 1.25rem;
-                        margin-bottom: 1rem;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        padding: 1.5rem;
+                        margin-bottom: 1.5rem;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                        border: 1px solid rgba(226, 232, 240, 0.8);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        background-color: rgba(255, 255, 255, 0.95);
+                        position: relative;
+                        overflow: hidden;
+                    }}
+                    
+                    .card::after {{
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%234299e1' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
+                        opacity: 0.6;
+                        z-index: 0;
+                        pointer-events: none;
+                    }}
+                    
+                    .card:hover {{
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
                     }}
                     
                     .workforce-heading {{
                         color: #2b6cb0;
-                        font-size: 1.25rem;
-                        margin-bottom: 0.75rem;
-                        padding-bottom: 0.5rem;
+                        font-size: 1.35rem;
+                        margin-bottom: 1rem;
+                        padding-bottom: 0.6rem;
                         border-bottom: 1px solid #e2e8f0;
+                        font-weight: 600;
+                        position: relative;
+                        z-index: 1;
                     }}
                     
                     .section-heading {{
                         color: #2c5282;
-                        font-size: 1.1rem;
-                        margin-bottom: 0.5rem;
+                        font-size: 1.15rem;
+                        margin-bottom: 0.75rem;
+                        font-weight: 600;
+                        position: relative;
+                        z-index: 1;
                     }}
                     
                     .result-section {{
                         background: #f8fafc;
-                        padding: 1rem;
+                        padding: 1.25rem;
                         border-radius: 8px;
-                        margin-bottom: 0.75rem;
+                        margin-bottom: 1rem;
+                        border-left: 3px solid #4299e1;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    }}
+                    
+                    .result-section::after {{
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, rgba(66, 153, 225, 0.05) 0%, rgba(49, 130, 206, 0.05) 100%);
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                        z-index: 0;
+                        pointer-events: none;
+                    }}
+                    
+                    .result-section:hover {{
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.12);
+                        border-left-color: #3182ce;
+                    }}
+                    
+                    .result-section:hover::after {{
+                        opacity: 1;
                     }}
                     
                     .result-content {{
-                        line-height: 1.4;
+                        line-height: 1.5;
+                        color: #4a5568;
+                        position: relative;
+                        z-index: 1;
                     }}
                     
-                    .result-content p {{
-                        margin: 0.5rem 0;
+                    .result-content strong {{
+                        color: #3182ce;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
                     }}
                     
-                    .result-content p:first-child {{
-                        margin-top: 0;
+                    /* Style for scores - we'll add a class in the markdown processing */
+                    .score-value {{
+                        display: inline-block;
+                        padding: 0.15rem 0.5rem;
+                        background-color: rgba(66, 153, 225, 0.1);
+                        border-radius: 4px;
+                        transition: all 0.3s ease;
+                        font-family: "Inter", sans-serif;
                     }}
                     
-                    .result-content p:last-child {{
-                        margin-bottom: 0;
+                    .result-section:hover .score-value {{
+                        background-color: rgba(66, 153, 225, 0.2);
+                        transform: translateY(-1px);
+                        box-shadow: 0 2px 5px rgba(66, 153, 225, 0.15);
                     }}
                     
-                    .btn-show-more, .btn-show-agent {{
+                    .result-section:hover .result-content strong {{
+                        color: #2c5282;
+                    }}
+                    
+                    /* Paper title display */
+                    .paper-title-container {{
+                        margin: 2rem 0 3rem;
+                        text-align: center;
+                        position: relative;
+                        padding: 0 1rem;
+                    }}
+                    
+                    .paper-title-wrapper {{
+                        max-width: 80%;
+                        margin: 0 auto;
+                        position: relative;
+                        background-color: #fff;
+                        border-radius: 8px;
+                        padding: 1.5rem 2rem;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+                        border: 1px solid rgba(226, 232, 240, 0.6);
+                        overflow: hidden;
+                    }}
+                    
+                    .paper-title-wrapper::before {{
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 4px;
+                        height: 100%;
+                        background: linear-gradient(to bottom, #4299e1, #2c5282);
+                    }}
+                    
+                    .paper-title {{
+                        font-family: 'Libre Baskerville', Georgia, serif;
+                        font-size: 1.35rem;
+                        font-weight: 500;
+                        color: #1a365d;
+                        line-height: 1.5;
+                        margin: 0;
+                        text-align: left;
+                    }}
+                    
+                    .paper-title-label {{
+                        font-size: 0.8rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                        color: #718096;
+                        font-weight: 600;
+                        margin-bottom: 0.5rem;
+                        display: block;
+                        text-align: left;
+                    }}
+                    
+                    @media (max-width: 768px) {{
+                        .paper-title-wrapper {{
+                            max-width: 90%;
+                            padding: 1.25rem 1.5rem;
+                        }}
+                        
+                        .paper-title {{
+                            font-size: 1.15rem;
+                        }}
+                    }}
+                    
+                    @media (max-width: 480px) {{
+                        .paper-title-wrapper {{
+                            max-width: 100%;
+                            padding: 1rem 1.25rem;
+                        }}
+                        
+                        .paper-title {{
+                            font-size: 1rem;
+                        }}
+                    }}
+                    
+                    /* Chatbot UI elements with improved styling and animations */
+                    .chat-btn {{
+                        position: fixed;
+                        top: 2rem;
+                        right: 2rem;
+                        width: 3.75rem;
+                        height: 3.75rem;
+                        background-color: #4299e1;
+                        color: white;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+                        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        z-index: 1000;
+                    }}
+                    
+                    .chat-btn i {{
+                        font-size: 1.5rem;
+                        transition: transform 0.3s ease;
+                    }}
+                    
+                    .chat-btn:hover {{
+                        transform: scale(1.1) rotate(5deg);
                         background-color: #3182ce;
+                    }}
+                    
+                    .chat-btn:hover i {{
+                        transform: scale(1.1);
+                    }}
+                    
+                    .chat-overlay {{
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        z-index: 1001;
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }}
+                    
+                    .chat-overlay.visible {{
+                        opacity: 1;
+                    }}
+                    
+                    .chat-container {{
+                        width: 70%;
+                        height: 80vh;
+                        background-color: white;
+                        border-radius: 16px;
+                        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+                        display: flex;
+                        flex-direction: column;
+                        overflow: hidden;
+                        transform: translateY(30px);
+                        opacity: 0;
+                        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+                    }}
+                    
+                    .chat-overlay.visible .chat-container {{
+                        transform: translateY(0);
+                        opacity: 1;
+                    }}
+                    
+                    .chat-header {{
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 1rem 1.5rem;
+                        background: linear-gradient(135deg, #4299e1, #3182ce);
+                        color: white;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                    }}
+                    
+                    .chat-header h3 {{
+                        margin: 0;
+                        font-weight: 600;
+                        font-size: 1.25rem;
+                        letter-spacing: -0.01em;
+                        display: flex;
+                        align-items: center;
+                    }}
+                    
+                    .chat-header h3 i {{
+                        margin-right: 0.5rem;
+                        font-size: 1.1rem;
+                    }}
+                    
+                    .close-chat {{
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        transition: transform 0.3s ease;
+                        width: 2rem;
+                        height: 2rem;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }}
+                    
+                    .close-chat:hover {{
+                        transform: rotate(90deg);
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }}
+                    
+                    .chat-body {{
+                        flex: 1;
+                        padding: 1.5rem;
+                        overflow-y: auto;
+                        background-color: #f8fafc;
+                        scrollbar-width: thin;
+                        scrollbar-color: #cbd5e0 #f8fafc;
+                    }}
+                    
+                    .chat-body::-webkit-scrollbar {{
+                        width: 6px;
+                    }}
+                    
+                    .chat-body::-webkit-scrollbar-track {{
+                        background: #f8fafc;
+                    }}
+                    
+                    .chat-body::-webkit-scrollbar-thumb {{
+                        background-color: #cbd5e0;
+                        border-radius: 6px;
+                    }}
+                    
+                    .chat-messages {{
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1rem;
+                    }}
+                    
+                    .message {{
+                        max-width: 80%;
+                        padding: 1rem 1.25rem;
+                        border-radius: 12px;
+                        line-height: 1.5;
+                        animation: fadeIn 0.3s ease;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                    }}
+                    
+                    @keyframes fadeIn {{
+                        from {{ opacity: 0; transform: translateY(10px); }}
+                        to {{ opacity: 1; transform: translateY(0); }}
+                    }}
+                    
+                    .user-message {{
+                        align-self: flex-end;
+                        background-color: #4299e1;
+                        color: white;
+                        border-bottom-right-radius: 4px;
+                    }}
+                    
+                    .bot-message {{
+                        align-self: flex-start;
+                        background-color: white;
+                        color: #2d3748;
+                        border-bottom-left-radius: 4px;
+                        border: 1px solid #e2e8f0;
+                    }}
+                    
+                    .chat-input-container {{
+                        padding: 1rem 1.25rem;
+                        background-color: white;
+                        border-top: 1px solid #e2e8f0;
+                        display: flex;
+                        gap: 0.75rem;
+                        align-items: flex-end;
+                    }}
+                    
+                    .chat-input {{
+                        flex: 1;
+                        padding: 0.8rem 1rem;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        font-size: 0.95rem;
+                        resize: none;
+                        max-height: 150px;
+                        transition: border-color 0.2s ease;
+                    }}
+                    
+                    .chat-input:focus {{
+                        outline: none;
+                        border-color: #4299e1;
+                        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+                    }}
+                    
+                    .send-btn {{
+                        background-color: #4299e1;
                         color: white;
                         border: none;
-                        padding: 0.5rem 1rem;
-                        border-radius: 6px;
+                        padding: 0.8rem;
+                        width: 3rem;
+                        height: 3rem;
+                        border-radius: 50%;
                         cursor: pointer;
-                        font-size: 0.875rem;
+                        font-weight: 500;
                         transition: all 0.2s ease;
-                        margin: 0.5rem 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+                    }}
+                    
+                    .send-btn i {{
+                        transition: transform 0.2s ease;
+                    }}
+                    
+                    .send-btn:hover {{
+                        background-color: #3182ce;
+                        transform: scale(1.05);
+                    }}
+                    
+                    .send-btn:hover i {{
+                        transform: translateX(2px);
+                    }}
+                    
+                    /* Responsive adjustments for chat UI */
+                    @media (max-width: 992px) {{
+                        .chat-container {{
+                            width: 85%;
+                        }}
+                    }}
+                    
+                    @media (max-width: 768px) {{
+                        .chat-container {{
+                            width: 90%;
+                            height: 85vh;
+                        }}
+                        
+                        .chat-btn {{
+                            top: 1.5rem;
+                            right: 1.5rem;
+                            width: 3.25rem;
+                            height: 3.25rem;
+                        }}
+                        
+                        .message {{
+                            max-width: 85%;
+                        }}
+                        
+                        .paper-title-wrapper {{
+                            max-width: 90%;
+                            padding: 1.25rem 1.5rem;
+                        }}
+                        
+                        .paper-title {{
+                            font-size: 1.15rem;
+                        }}
+                    }}
+                    
+                    @media (max-width: 480px) {{
+                        .chat-container {{
+                            width: 95%;
+                            height: 90vh;
+                        }}
+                        
+                        .chat-header {{
+                            padding: 0.8rem 1rem;
+                        }}
+                        
+                        .chat-body {{
+                            padding: 1rem;
+                        }}
+                        
+                        body {{
+                            padding: 1rem;
+                        }}
+                        
+                        .message {{
+                            max-width: 90%;
+                            padding: 0.8rem 1rem;
+                        }}
+                    }}
+                    
+                    .btn-show-more {{
+                        background-color: #4299e1;
+                        color: white;
+                        border: none;
+                        padding: 0.6rem 1.2rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 0.9rem;
+                        transition: all 0.2s ease;
+                        margin: 0.75rem 0;
                         display: flex;
                         align-items: center;
                         gap: 0.5rem;
                         width: fit-content;
+                        font-weight: 500;
+                    }}
+                    
+                    .btn-show-more i {{
+                        margin-right: 8px;
+                        font-size: 0.8rem;
+                    }}
+                    
+                    .btn-show-more.active i {{
+                        transform: rotate(180deg);
+                    }}
+                    
+                    .btn-show-more:hover {{
+                        background-color: #3182ce;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
                     }}
                     
                     .btn-show-agent {{
                         background-color: #4a5568;
-                        font-size: 0.9rem;
+                        color: white;
+                        border: none;
                         padding: 0.75rem 1.2rem;
                         width: 100%;
                         text-align: left;
@@ -277,17 +882,157 @@ def index():
                         margin-bottom: 0.5rem;
                         white-space: normal;
                         line-height: 1.4;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                        position: relative;
+                        font-size: 0.95rem;
                     }}
                     
-                    .btn-show-more:hover, .btn-show-agent:hover {{
-                        transform: translateY(-1px);
+                    .expand-indicator {{
+                        position: absolute;
+                        right: 1rem;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 24px;
+                        height: 24px;
+                        transition: all 0.2s ease;
+                        background-color: rgba(255, 255, 255, 0.1);
+                        border-radius: 50%;
+                    }}
+                    
+                    .btn-show-agent:hover {{
                         background-color: #2d3748;
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                    }}
+                    
+                    .btn-show-agent:hover .expand-indicator {{
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }}
+                    
+                    /* Agent color variations */
+                    .agent-color-0 .btn-show-agent.agent-color-0 {{
+                        background-color: #4a5568;
+                        border-left: 4px solid #805ad5;
+                    }}
+                    
+                    .agent-color-0 .btn-show-agent.agent-color-0:hover {{
+                        background-color: #383f4d;
+                        box-shadow: 0 4px 8px rgba(128, 90, 213, 0.25);
+                    }}
+                    
+                    .agent-color-1 .btn-show-agent.agent-color-1 {{
+                        background-color: #2d3748;
+                        border-left: 4px solid #3182ce;
+                    }}
+                    
+                    .agent-color-1 .btn-show-agent.agent-color-1:hover {{
+                        background-color: #252d3b;
+                        box-shadow: 0 4px 8px rgba(49, 130, 206, 0.25);
+                    }}
+                    
+                    .agent-color-2 .btn-show-agent.agent-color-2 {{
+                        background-color: #1a202c;
+                        border-left: 4px solid #38b2ac;
+                    }}
+                    
+                    .agent-color-2 .btn-show-agent.agent-color-2:hover {{
+                        background-color: #131720;
+                        box-shadow: 0 4px 8px rgba(56, 178, 172, 0.25);
+                    }}
+                    
+                    .agent-color-3 .btn-show-agent.agent-color-3 {{
+                        background-color: #2c5282;
+                        border-left: 4px solid #ed8936;
+                    }}
+                    
+                    .agent-color-3 .btn-show-agent.agent-color-3:hover {{
+                        background-color: #234571;
+                        box-shadow: 0 4px 8px rgba(237, 137, 54, 0.25);
+                    }}
+                    
+                    .agent-color-4 .btn-show-agent.agent-color-4 {{
+                        background-color: #285e61;
+                        border-left: 4px solid #e53e3e;
+                    }}
+                    
+                    .agent-color-4 .btn-show-agent.agent-color-4:hover {{
+                        background-color: #1d4548;
+                        box-shadow: 0 4px 8px rgba(229, 62, 62, 0.25);
+                    }}
+                    
+                    .btn-show-agent.active {{
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                    }}
+                    
+                    .btn-show-agent.active .expand-indicator {{
+                        transform: translateY(-50%) rotate(180deg);
+                    }}
+                    
+                    /* Active states for each color */
+                    .agent-color-0 .btn-show-agent.agent-color-0.active {{
+                        background-color: #383f4d;
+                        box-shadow: 0 4px 12px rgba(128, 90, 213, 0.3);
+                    }}
+                    
+                    .agent-color-1 .btn-show-agent.agent-color-1.active {{
+                        background-color: #252d3b;
+                        box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+                    }}
+                    
+                    .agent-color-2 .btn-show-agent.agent-color-2.active {{
+                        background-color: #131720;
+                        box-shadow: 0 4px 12px rgba(56, 178, 172, 0.3);
+                    }}
+                    
+                    .agent-color-3 .btn-show-agent.agent-color-3.active {{
+                        background-color: #234571;
+                        box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+                    }}
+                    
+                    .agent-color-4 .btn-show-agent.agent-color-4.active {{
+                        background-color: #1d4548;
+                        box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
                     }}
                     
                     .agent-section {{
                         background: #f8fafc;
                         padding: 0.75rem;
                         border-radius: 8px;
+                        margin-bottom: 0.75rem;
+                        transition: all 0.2s ease;
+                    }}
+                    
+                    .agent-section:hover {{
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    }}
+                    
+                    .agent-section.agent-color-0 {{
+                        background: linear-gradient(to right, rgba(128, 90, 213, 0.08), rgba(128, 90, 213, 0.01));
+                        border-left: 3px solid #805ad5;
+                    }}
+                    
+                    .agent-section.agent-color-1 {{
+                        background: linear-gradient(to right, rgba(49, 130, 206, 0.08), rgba(49, 130, 206, 0.01));
+                        border-left: 3px solid #3182ce;
+                    }}
+                    
+                    .agent-section.agent-color-2 {{
+                        background: linear-gradient(to right, rgba(56, 178, 172, 0.08), rgba(56, 178, 172, 0.01));
+                        border-left: 3px solid #38b2ac;
+                    }}
+                    
+                    .agent-section.agent-color-3 {{
+                        background: linear-gradient(to right, rgba(237, 137, 54, 0.08), rgba(237, 137, 54, 0.01));
+                        border-left: 3px solid #ed8936;
+                    }}
+                    
+                    .agent-section.agent-color-4 {{
+                        background: linear-gradient(to right, rgba(229, 62, 62, 0.08), rgba(229, 62, 62, 0.01));
+                        border-left: 3px solid #e53e3e;
                     }}
                     
                     .agent-details {{
@@ -299,8 +1044,32 @@ def index():
                         background: white;
                         padding: 1.5rem;
                         border-radius: 8px;
-                        border-left: 4px solid #3182ce;
                         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                        transition: box-shadow 0.2s ease;
+                    }}
+                    
+                    .agent-details .detail-item.agent-color-0 {{
+                        border-left: 4px solid #805ad5;
+                    }}
+                    
+                    .agent-details .detail-item.agent-color-1 {{
+                        border-left: 4px solid #3182ce;
+                    }}
+                    
+                    .agent-details .detail-item.agent-color-2 {{
+                        border-left: 4px solid #38b2ac;
+                    }}
+                    
+                    .agent-details .detail-item.agent-color-3 {{
+                        border-left: 4px solid #ed8936;
+                    }}
+                    
+                    .agent-details .detail-item.agent-color-4 {{
+                        border-left: 4px solid #e53e3e;
+                    }}
+                    
+                    .agent-details .detail-item:hover {{
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                     }}
                     
                     .hidden {{
@@ -326,11 +1095,50 @@ def index():
                         margin: 0.5rem 0;
                     }}
                     
+                    .main-header {{
+                        text-align: center;
+                        padding: 2.5rem 0;
+                        background: linear-gradient(135deg, #2c5282, #4299e1);
+                        color: white;
+                        margin-bottom: 3rem;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 25px rgba(44, 82, 130, 0.2);
+                        position: relative;
+                        overflow: hidden;
+                    }}
+                    
+                    .main-header::before {{
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                        opacity: 0.3;
+                    }}
+                    
+                    .main-header h1 {{
+                        font-size: 2.25rem;
+                        margin-bottom: 0.75rem;
+                        font-weight: 700;
+                        letter-spacing: -0.01em;
+                        position: relative;
+                    }}
+                    
+                    .main-header p {{
+                        font-size: 1.1rem;
+                        opacity: 0.9;
+                        position: relative;
+                        max-width: 80%;
+                        margin: 0 auto;
+                    }}
+                    
                     .btn-go-back {{
                         position: fixed;
                         bottom: 2rem;
                         left: 2rem;
-                        background-color: #3182ce;
+                        background-color: #4299e1;
                         color: white;
                         width: 3.5rem;
                         height: 3.5rem;
@@ -339,77 +1147,31 @@ def index():
                         align-items: center;
                         justify-content: center;
                         text-decoration: none;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                        transition: all 0.2s ease;
+                        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+                        transition: all 0.3s ease;
+                        z-index: 100;
                     }}
                     
                     .btn-go-back:hover {{
-                        transform: scale(1.1);
-                        background-color: #2c5282;
-                    }}
-                    
-                    strong {{
-                        color: #2c5282;
-                    }}
-                    
-                    /* Style for scores */
-                    p strong {{
-                        color: #2b6cb0;
-                        font-size: 1em;
-                    }}
-                    
-                    /* Responsive adjustments */
-                    @media (max-width: 768px) {{
-                        body {{
-                            padding: 0.75rem;
-                        }}
-                        
-                        .card {{
-                            padding: 1rem;
-                        }}
-                        
-                        .result-section,
-                        .detail-item {{
-                            padding: 0.75rem;
-                        }}
-                    }}
-                    
-                    .main-header {{
-                        text-align: center;
-                        padding: 2rem 0;
-                        background: linear-gradient(135deg, #2c5282, #3182ce);
-                        color: white;
-                        margin-bottom: 2rem;
-                        border-radius: 12px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    }}
-                    
-                    .main-header h1 {{
-                        font-size: 2rem;
-                        margin-bottom: 0.5rem;
-                    }}
-                    
-                    .main-header p {{
-                        font-size: 1.1rem;
-                        opacity: 0.9;
-                    }}
-                    
-                    .agent-name {{
-                        color: #2b6cb0;
-                        font-size: 1.2rem;
-                        margin-bottom: 1rem;
-                        padding-bottom: 0.5rem;
-                        border-bottom: 1px solid #e2e8f0;
+                        transform: scale(1.1) rotate(-5deg);
+                        background-color: #3182ce;
                     }}
                 </style>
             </head>
             <body>
+                <div class="page-accent-top"></div>
                 <div class="container">
                     <div class="main-header">
                         <h1>SLR Paper Evaluator using LLMs</h1>
                         <p>Automated Systematic Literature Review Analysis Tool</p>
                     </div>
-                    <h2>Analysis Results for "{paper_title}"</h2>
+                    <h2>Analysis Results</h2>
+                    <div class="paper-title-container">
+                        <div class="paper-title-wrapper">
+                            <div class="paper-title-label">Paper Title</div>
+                            <div class="paper-title">{paper_title}</div>
+                        </div>
+                    </div>
                 {raw_cards}
                 </div>
 
@@ -417,15 +1179,248 @@ def index():
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 
+                <!-- Chatbot button and overlay -->
+                <div class="chat-btn" id="chatButton" title="Ask about the paper">
+                    <i class="fas fa-comments"></i>
+                </div>
+                
+                <div class="chat-overlay" id="chatOverlay">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h3><i class="fas fa-robot"></i> SLR-GPT Assistant</h3>
+                            <button class="close-chat" id="closeChat">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="chat-body">
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="message bot-message">
+                                    Hi! I'm your SLR-GPT Assistant. Ask me anything about the paper analysis.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <textarea class="chat-input" id="chatInput" placeholder="Type your message here..." rows="1"></textarea>
+                            <button class="send-btn" id="sendMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-accent-bottom"></div>
+                
                 <script>
                     function toggleVisibility(btn, id) {{
                         const content = document.getElementById(id);
                         const isHidden = content.style.display === "none" || content.style.display === "";
+                        
+                        // Check if this is a show-more button or an agent button
+                        const isShowMoreBtn = btn.classList.contains('btn-show-more');
+                        
+                        if (isShowMoreBtn) {{
+                            // For Show More button, just rotate the icon
                         const icon = btn.querySelector('i');
+                            content.style.display = isHidden ? "block" : "none";
+                            
+                            if (isHidden) {{
+                                icon.className = "fas fa-chevron-up";
+                                btn.classList.add('active');
+                            }} else {{
+                                icon.className = "fas fa-chevron-down";
+                                btn.classList.remove('active');
+                            }}
+                        }} else {{
+                            // For agent buttons, use the expand indicator
+                            const indicator = btn.querySelector('.expand-indicator i');
                         
                         content.style.display = isHidden ? "block" : "none";
-                        icon.className = isHidden ? "fas fa-chevron-up me-2" : "fas fa-chevron-down me-2";
+                            indicator.className = isHidden ? "fas fa-chevron-up" : "fas fa-chevron-down";
+                            
+                            // Add active class to button when expanded
+                            if (isHidden) {{
+                                btn.classList.add('active');
+                            }} else {{
+                                btn.classList.remove('active');
+                            }}
+                        }}
                     }}
+                    
+                    // Chatbot functionality with animations
+                    document.addEventListener('DOMContentLoaded', function() {{
+                        const chatButton = document.getElementById('chatButton');
+                        const chatOverlay = document.getElementById('chatOverlay');
+                        const closeChat = document.getElementById('closeChat');
+                        const chatInput = document.getElementById('chatInput');
+                        const sendMessage = document.getElementById('sendMessage');
+                        const chatMessages = document.getElementById('chatMessages');
+                        
+                        // Open chat overlay with animation
+                        chatButton.addEventListener('click', function() {{
+                            chatOverlay.style.display = 'flex';
+                            setTimeout(() => {{
+                                chatOverlay.classList.add('visible');
+                            }}, 10);
+                            chatInput.focus();
+                        }});
+                        
+                        // Close chat overlay with animation
+                        function closeOverlay() {{
+                            chatOverlay.classList.remove('visible');
+                            setTimeout(() => {{
+                                chatOverlay.style.display = 'none';
+                            }}, 300);
+                        }}
+                        
+                        closeChat.addEventListener('click', closeOverlay);
+                        
+                        // Close overlay when clicking outside the chat container
+                        chatOverlay.addEventListener('click', function(event) {{
+                            if (event.target === chatOverlay) {{
+                                closeOverlay();
+                            }}
+                        }});
+                        
+                        // Send message on Enter key press
+                        chatInput.addEventListener('keypress', function(event) {{
+                            if (event.key === 'Enter' && !event.shiftKey) {{
+                                event.preventDefault();
+                                sendUserMessage();
+                            }}
+                        }});
+                        
+                        // Send message on button click
+                        sendMessage.addEventListener('click', sendUserMessage);
+                        
+                        function sendUserMessage() {{
+                            const message = chatInput.value.trim();
+                            if (message) {{
+                                // Add user message to chat
+                                addMessage(message, 'user');
+                                
+                                // Clear input and resize
+                                chatInput.value = '';
+                                chatInput.style.height = 'auto';
+                                
+                                // Get paper title from the paper title container
+                                const paperTitle = document.querySelector('.paper-title').textContent;
+                                
+                                // Add loading indicator
+                                const loadingId = showLoadingMessage();
+                                
+                                // Send to backend and get response
+                                fetch('/chat', {{
+                                    method: 'POST',
+                                    headers: {{
+                                        'Content-Type': 'application/json',
+                                    }},
+                                    body: JSON.stringify({{
+                                        message: message,
+                                        paper_title: paperTitle
+                                    }})
+                                }})
+                                .then(response => response.json())
+                                .then(data => {{
+                                    // Remove loading indicator
+                                    removeLoadingMessage(loadingId);
+                                    
+                                    // Add bot response
+                                    addMessage(data.response, 'bot');
+                                }})
+                                .catch(error => {{
+                                    // Remove loading indicator
+                                    removeLoadingMessage(loadingId);
+                                    
+                                    console.error('Error:', error);
+                                    addMessage('Sorry, I had trouble processing your request. Please try again.', 'bot');
+                                }});
+                            }}
+                        }}
+                        
+                        function showLoadingMessage() {{
+                            const loadingDiv = document.createElement('div');
+                            loadingDiv.classList.add('message', 'bot-message');
+                            loadingDiv.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+                            chatMessages.appendChild(loadingDiv);
+                            
+                            // Scroll to the bottom
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                            
+                            return loadingDiv.id = 'loading-' + Date.now();
+                        }}
+                        
+                        function removeLoadingMessage(id) {{
+                            const loadingDiv = document.getElementById(id);
+                            if (loadingDiv) {{
+                                loadingDiv.remove();
+                            }}
+                        }}
+                        
+                        function addMessage(text, sender) {{
+                            const messageDiv = document.createElement('div');
+                            messageDiv.classList.add('message');
+                            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+                            
+                            if (sender === 'bot') {{
+                                // For bot messages, render HTML content
+                                messageDiv.innerHTML = text;
+                            }} else {{
+                                // For user messages, keep as plain text
+                                messageDiv.textContent = text;
+                            }}
+                            
+                            chatMessages.appendChild(messageDiv);
+                            
+                            // Scroll to the bottom
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }}
+                        
+                        // Auto-resize textarea
+                        chatInput.addEventListener('input', function() {{
+                            this.style.height = 'auto';
+                            this.style.height = (this.scrollHeight) + 'px';
+                        }});
+                        
+                        // Add typing indicator style
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            .typing-indicator {{
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                height: 20px;
+                            }}
+                            
+                            .typing-indicator span {{
+                                height: 8px;
+                                width: 8px;
+                                background: #3182ce;
+                                border-radius: 50%;
+                                display: inline-block;
+                                margin: 0 2px;
+                                opacity: 0.6;
+                                animation: typing 1s infinite;
+                            }}
+                            
+                            .typing-indicator span:nth-child(1) {{
+                                animation-delay: 0s;
+                            }}
+                            
+                            .typing-indicator span:nth-child(2) {{
+                                animation-delay: 0.2s;
+                            }}
+                            
+                            .typing-indicator span:nth-child(3) {{
+                                animation-delay: 0.4s;
+                            }}
+                            
+                            @keyframes typing {{
+                                0% {{ transform: translateY(0); }}
+                                50% {{ transform: translateY(-5px); }}
+                                100% {{ transform: translateY(0); }}
+                            }}
+                        `;
+                        document.head.appendChild(style);
+                    }});
                 </script>
             </body>
             </html>
@@ -597,6 +1592,64 @@ def render_upload_form():
     </body>
     </html>
     """
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    try:
+        data = request.json
+        if not data or 'message' not in data or 'paper_title' not in data:
+            return {"response": "Invalid request, message and paper_title required"}, 400
+            
+        user_message = data['message']
+        paper_title = data['paper_title']
+        
+        global chat_agent
+        # Get response from the agent
+        response = SLR_GPT(chat_agent, user_message)
+
+        response = markdown.markdown(response, extensions=[    "abbr",
+                                        "attr_list",
+                                        "def_list",
+                                        "fenced_code",
+                                        "footnotes",
+                                        "tables",
+                                        "admonition",
+                                        "codehilite",
+                                        "meta",
+                                        "nl2br",
+                                        "sane_lists",
+                                        "smarty",
+                                        "toc",
+                                        "wikilinks",
+
+                                        "pymdownx.extra",
+                                        "pymdownx.emoji",
+                                        "pymdownx.tasklist",
+                                        "pymdownx.superfences",
+                                        "pymdownx.magiclink",
+                                        "pymdownx.highlight",
+                                        "pymdownx.keys",
+                                        "pymdownx.arithmatex",
+                                        "pymdownx.caret",
+                                        "pymdownx.mark",
+                                        "pymdownx.tilde",
+                                        "pymdownx.smartsymbols",
+                                        "pymdownx.betterem",
+                                        "pymdownx.escapeall",
+                                        "pymdownx.progressbar",
+                                        "pymdownx.inlinehilite",
+                                        "pymdownx.snippets",
+                                        "pymdownx.details",
+                                        "pymdownx.tabbed"
+                                    ],)
+        
+            
+        return {"response": response}
+        
+    except Exception as e:
+        print(f"Error in chat endpoint: {str(e)}")
+        return {"response": f"Sorry, I encountered an error processing your request: {str(e)}"}, 500
 
 
 if __name__ == "__main__":
