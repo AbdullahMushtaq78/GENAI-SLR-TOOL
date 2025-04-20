@@ -118,8 +118,8 @@ def generate_society_css():
             }}
             
             .btn-show-agent {{
-                background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-                color: white;
+                background: rgba(255, 255, 255, 0.85);
+                color: var(--text-primary);
                 border: none;
                 padding: 0.85rem 1.25rem;
                 width: 100%;
@@ -134,6 +134,8 @@ def generate_society_css():
                 font-size: 0.95rem;
                 overflow: hidden;
                 font-weight: 600;
+                backdrop-filter: blur(5px);
+                border-left: 4px solid transparent;
             }}
             
             .btn-show-agent::before {{
@@ -143,9 +145,10 @@ def generate_society_css():
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-                opacity: 0;
+                background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+                opacity: 0.6;
                 transition: opacity 0.3s ease;
+                z-index: 0;
             }}
             
             .expand-indicator {{
@@ -159,19 +162,22 @@ def generate_society_css():
                 width: 24px;
                 height: 24px;
                 transition: all 0.2s ease;
-                background-color: rgba(255, 255, 255, 0.15);
+                background-color: rgba(0, 0, 0, 0.1);
                 border-radius: 50%;
+                z-index: 1;
             }}
             
             .btn-show-agent .agent-number {{
                 display: inline-block;
-                background-color: rgba(255, 255, 255, 0.2);
+                background-color: rgba(0, 0, 0, 0.08);
                 border-radius: 6px;
                 padding: 0.15rem 0.5rem;
                 margin-right: 0.6rem;
                 font-weight: 700;
                 font-size: 0.85rem;
                 letter-spacing: 0.02em;
+                position: relative;
+                z-index: 1;
             }}
             
             .btn-show-agent .agent-icon {{
@@ -181,24 +187,208 @@ def generate_society_css():
                 width: 1.6rem;
                 margin-right: 0.5rem;
                 text-align: center;
+                position: relative;
+                z-index: 1;
             }}
             
             .btn-show-agent .agent-name {{
                 font-weight: 600;
                 letter-spacing: 0.01em;
+                position: relative;
+                z-index: 1;
             }}
             
             .btn-show-agent:hover {{
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             }}
             
             .btn-show-agent:hover::before {{
-                opacity: 1;
+                opacity: 0.9;
             }}
             
-            .btn-show-agent:hover .expand-indicator {{
-                background-color: rgba(255, 255, 255, 0.2);
+            .agent-color-0 .btn-show-agent.agent-color-0 {{
+                background: rgba(226, 232, 255, 0.8);
+                border-left: 4px solid #4f46e5;
+                color: #312e81;
+            }}
+            
+            .agent-color-1 .btn-show-agent.agent-color-1 {{
+                background: rgba(209, 250, 229, 0.8);
+                border-left: 4px solid #0d9488;
+                color: #064e3b;
+            }}
+            
+            .agent-color-2 .btn-show-agent.agent-color-2 {{
+                background: rgba(254, 240, 185, 0.8);
+                border-left: 4px solid #d97706;
+                color: #92400e;
+            }}
+            
+            .agent-color-3 .btn-show-agent.agent-color-3 {{
+                background: rgba(253, 224, 235, 0.8);
+                border-left: 4px solid #db2777;
+                color: #831843;
+            }}
+            
+            .agent-color-4 .btn-show-agent.agent-color-4 {{
+                background: rgba(237, 223, 252, 0.8);
+                border-left: 4px solid #7c3aed;
+                color: #4c1d95;
+            }}
+            
+            .btn-show-agent.active {{
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            }}
+            
+            .btn-show-agent.active .expand-indicator {{
+                transform: translateY(-50%) rotate(180deg);
+                background-color: rgba(0, 0, 0, 0.15);
+            }}
+            
+            .agent-color-0 .btn-show-agent.agent-color-0.active,
+            .agent-color-0 .btn-show-agent.agent-color-0:hover {{
+                background: rgba(224, 231, 255, 0.9);
+                box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+            }}
+            
+            .agent-color-1 .btn-show-agent.agent-color-1.active,
+            .agent-color-1 .btn-show-agent.agent-color-1:hover {{
+                background: rgba(204, 251, 241, 0.9);
+                box-shadow: 0 8px 20px rgba(20, 184, 166, 0.2);
+            }}
+            
+            .agent-color-2 .btn-show-agent.agent-color-2.active,
+            .agent-color-2 .btn-show-agent.agent-color-2:hover {{
+                background: rgba(255, 251, 235, 0.9);
+                box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+            }}
+            
+            .agent-color-3 .btn-show-agent.agent-color-3.active,
+            .agent-color-3 .btn-show-agent.agent-color-3:hover {{
+                background: rgba(253, 232, 242, 0.9);
+                box-shadow: 0 8px 20px rgba(236, 72, 153, 0.2);
+            }}
+            
+            .agent-color-4 .btn-show-agent.agent-color-4.active,
+            .agent-color-4 .btn-show-agent.agent-color-4:hover {{
+                background: rgba(243, 232, 255, 0.9);
+                box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+            }}
+            
+            .agent-color-0 .btn-show-agent.agent-color-0 .agent-number {{
+                background-color: rgba(79, 70, 229, 0.15);
+                color: #4338ca;
+            }}
+            
+            .agent-color-1 .btn-show-agent.agent-color-1 .agent-number {{
+                background-color: rgba(13, 148, 136, 0.15);
+                color: #0f766e;
+            }}
+            
+            .agent-color-2 .btn-show-agent.agent-color-2 .agent-number {{
+                background-color: rgba(217, 119, 6, 0.15);
+                color: #b45309;
+            }}
+            
+            .agent-color-3 .btn-show-agent.agent-color-3 .agent-number {{
+                background-color: rgba(219, 39, 119, 0.15);
+                color: #be185d;
+            }}
+            
+            .agent-color-4 .btn-show-agent.agent-color-4 .agent-number {{
+                background-color: rgba(124, 58, 237, 0.15);
+                color: #6d28d9;
+            }}
+            
+            .agent-color-0 .btn-show-agent.agent-color-0 .expand-indicator {{
+                background-color: rgba(79, 70, 229, 0.15);
+                color: #4338ca;
+            }}
+            
+            .agent-color-1 .btn-show-agent.agent-color-1 .expand-indicator {{
+                background-color: rgba(13, 148, 136, 0.15);
+                color: #0f766e;
+            }}
+            
+            .agent-color-2 .btn-show-agent.agent-color-2 .expand-indicator {{
+                background-color: rgba(217, 119, 6, 0.15);
+                color: #b45309;
+            }}
+            
+            .agent-color-3 .btn-show-agent.agent-color-3 .expand-indicator {{
+                background-color: rgba(219, 39, 119, 0.15);
+                color: #be185d;
+            }}
+            
+            .agent-color-4 .btn-show-agent.agent-color-4 .expand-indicator {{
+                background-color: rgba(124, 58, 237, 0.15);
+                color: #6d28d9;
+            }}
+            
+            .agent-section {{
+                background: rgba(255, 255, 255, 0.5);
+                padding: 0.9rem;
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                transition: var(--transition-base);
+                backdrop-filter: blur(10px);
+                position: relative;
+                overflow: hidden;
+                border: 2px solid transparent;
+            }}
+            
+            .agent-section:hover {{
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-lg);
+                background: rgba(255, 255, 255, 0.65);
+                border-color: rgba(255, 255, 255, 0.9);
+            }}
+            
+            /* Agent section color variants with gradient backgrounds */
+            .agent-section.agent-color-0 {{
+                background: linear-gradient(to right, rgba(99, 102, 241, 0.08), rgba(79, 70, 229, 0.03));
+                border-left: 4px solid var(--primary-color);
+            }}
+            
+            .agent-section.agent-color-0:hover {{
+                background: linear-gradient(to right, rgba(99, 102, 241, 0.12), rgba(79, 70, 229, 0.07));
+            }}
+            
+            .agent-section.agent-color-1 {{
+                background: linear-gradient(to right, rgba(20, 184, 166, 0.08), rgba(13, 148, 136, 0.03));
+                border-left: 4px solid #0d9488;
+            }}
+            
+            .agent-section.agent-color-1:hover {{
+                background: linear-gradient(to right, rgba(20, 184, 166, 0.12), rgba(13, 148, 136, 0.07));
+            }}
+            
+            .agent-section.agent-color-2 {{
+                background: linear-gradient(to right, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.03));
+                border-left: 4px solid #d97706;
+            }}
+            
+            .agent-section.agent-color-2:hover {{
+                background: linear-gradient(to right, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.07));
+            }}
+            
+            .agent-section.agent-color-3 {{
+                background: linear-gradient(to right, rgba(236, 72, 153, 0.08), rgba(219, 39, 119, 0.03));
+                border-left: 4px solid #db2777;
+            }}
+            
+            .agent-section.agent-color-3:hover {{
+                background: linear-gradient(to right, rgba(236, 72, 153, 0.12), rgba(219, 39, 119, 0.07));
+            }}
+            
+            .agent-section.agent-color-4 {{
+                background: linear-gradient(to right, rgba(139, 92, 246, 0.08), rgba(124, 58, 237, 0.03));
+                border-left: 4px solid #7c3aed;
+            }}
+            
+            .agent-section.agent-color-4:hover {{
+                background: linear-gradient(to right, rgba(139, 92, 246, 0.12), rgba(124, 58, 237, 0.07));
             }}
         """
     return css
@@ -1106,8 +1296,8 @@ def index():
                     }}
                     
                     .btn-show-agent {{
-                        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-                        color: white;
+                        background: rgba(255, 255, 255, 0.85);
+                        color: var(--text-primary);
                         border: none;
                         padding: 0.85rem 1.25rem;
                         width: 100%;
@@ -1122,6 +1312,8 @@ def index():
                         font-size: 0.95rem;
                         overflow: hidden;
                         font-weight: 600;
+                        backdrop-filter: blur(5px);
+                        border-left: 4px solid transparent;
                     }}
                     
                     .btn-show-agent::before {{
@@ -1131,9 +1323,10 @@ def index():
                         left: 0;
                         width: 100%;
                         height: 100%;
-                        background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-                        opacity: 0;
+                        background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+                        opacity: 0.6;
                         transition: opacity 0.3s ease;
+                        z-index: 0;
                     }}
                     
                     .expand-indicator {{
@@ -1147,19 +1340,22 @@ def index():
                         width: 24px;
                         height: 24px;
                         transition: all 0.2s ease;
-                        background-color: rgba(255, 255, 255, 0.15);
+                        background-color: rgba(0, 0, 0, 0.1);
                         border-radius: 50%;
+                        z-index: 1;
                     }}
                     
                     .btn-show-agent .agent-number {{
                         display: inline-block;
-                        background-color: rgba(255, 255, 255, 0.2);
+                        background-color: rgba(0, 0, 0, 0.08);
                         border-radius: 6px;
                         padding: 0.15rem 0.5rem;
                         margin-right: 0.6rem;
                         font-weight: 700;
                         font-size: 0.85rem;
                         letter-spacing: 0.02em;
+                        position: relative;
+                        z-index: 1;
                     }}
                     
                     .btn-show-agent .agent-icon {{
@@ -1169,89 +1365,147 @@ def index():
                         width: 1.6rem;
                         margin-right: 0.5rem;
                         text-align: center;
+                        position: relative;
+                        z-index: 1;
                     }}
                     
                     .btn-show-agent .agent-name {{
                         font-weight: 600;
                         letter-spacing: 0.01em;
+                        position: relative;
+                        z-index: 1;
                     }}
                     
                     .btn-show-agent:hover {{
                         transform: translateY(-2px);
-                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
                     }}
                     
                     .btn-show-agent:hover::before {{
-                        opacity: 1;
+                        opacity: 0.9;
                     }}
                     
-                    .btn-show-agent:hover .expand-indicator {{
-                        background-color: rgba(255, 255, 255, 0.2);
-                    }}
-                    
-                    /* Agent color variations with updated gradient styles */
+                    /* Agent color variations with updated styles - lighter backgrounds with colorful text */
                     .agent-color-0 .btn-show-agent.agent-color-0 {{
-                        background: linear-gradient(135deg, #6366f1, #4f46e5);
-                        border-left: 4px solid var(--primary-color);
+                        background: rgba(226, 232, 255, 0.8);
+                        border-left: 4px solid #4f46e5;
+                        color: #312e81;
                     }}
                     
                     .agent-color-1 .btn-show-agent.agent-color-1 {{
-                        background: linear-gradient(135deg, #14b8a6, #0d9488);
+                        background: rgba(209, 250, 229, 0.8);
                         border-left: 4px solid #0d9488;
+                        color: #064e3b;
                     }}
                     
                     .agent-color-2 .btn-show-agent.agent-color-2 {{
-                        background: linear-gradient(135deg, #f59e0b, #d97706);
+                        background: rgba(254, 240, 185, 0.8);
                         border-left: 4px solid #d97706;
+                        color: #92400e;
                     }}
                     
                     .agent-color-3 .btn-show-agent.agent-color-3 {{
-                        background: linear-gradient(135deg, #ec4899, #db2777);
+                        background: rgba(253, 224, 235, 0.8);
                         border-left: 4px solid #db2777;
+                        color: #831843;
                     }}
                     
                     .agent-color-4 .btn-show-agent.agent-color-4 {{
-                        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                        background: rgba(237, 223, 252, 0.8);
                         border-left: 4px solid #7c3aed;
+                        color: #4c1d95;
                     }}
                     
                     .btn-show-agent.active {{
-                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
                     }}
                     
                     .btn-show-agent.active .expand-indicator {{
                         transform: translateY(-50%) rotate(180deg);
+                        background-color: rgba(0, 0, 0, 0.15);
                     }}
                     
-                    /* Active states for each color with more vibrant effects */
+                    /* Active states and hover effects for each color */
                     .agent-color-0 .btn-show-agent.agent-color-0.active,
                     .agent-color-0 .btn-show-agent.agent-color-0:hover {{
-                        background: linear-gradient(135deg, #4f46e5, #4338ca);
-                        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+                        background: rgba(224, 231, 255, 0.9);
+                        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
                     }}
                     
                     .agent-color-1 .btn-show-agent.agent-color-1.active,
                     .agent-color-1 .btn-show-agent.agent-color-1:hover {{
-                        background: linear-gradient(135deg, #0d9488, #0f766e);
-                        box-shadow: 0 8px 20px rgba(20, 184, 166, 0.3);
+                        background: rgba(204, 251, 241, 0.9);
+                        box-shadow: 0 8px 20px rgba(20, 184, 166, 0.2);
                     }}
                     
                     .agent-color-2 .btn-show-agent.agent-color-2.active,
                     .agent-color-2 .btn-show-agent.agent-color-2:hover {{
-                        background: linear-gradient(135deg, #d97706, #b45309);
-                        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+                        background: rgba(255, 251, 235, 0.9);
+                        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
                     }}
                     
                     .agent-color-3 .btn-show-agent.agent-color-3.active,
                     .agent-color-3 .btn-show-agent.agent-color-3:hover {{
-                        background: linear-gradient(135deg, #db2777, #be185d);
-                        box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+                        background: rgba(253, 232, 242, 0.9);
+                        box-shadow: 0 8px 20px rgba(236, 72, 153, 0.2);
                     }}
                     
                     .agent-color-4 .btn-show-agent.agent-color-4.active,
                     .agent-color-4 .btn-show-agent.agent-color-4:hover {{
-                        background: linear-gradient(135deg, #7c3aed, #6d28d9);
-                        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+                        background: rgba(243, 232, 255, 0.9);
+                        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+                    }}
+                    
+                    /* Updated agent numbers to match the theme colors */
+                    .agent-color-0 .btn-show-agent.agent-color-0 .agent-number {{
+                        background-color: rgba(79, 70, 229, 0.15);
+                        color: #4338ca;
+                    }}
+                    
+                    .agent-color-1 .btn-show-agent.agent-color-1 .agent-number {{
+                        background-color: rgba(13, 148, 136, 0.15);
+                        color: #0f766e;
+                    }}
+                    
+                    .agent-color-2 .btn-show-agent.agent-color-2 .agent-number {{
+                        background-color: rgba(217, 119, 6, 0.15);
+                        color: #b45309;
+                    }}
+                    
+                    .agent-color-3 .btn-show-agent.agent-color-3 .agent-number {{
+                        background-color: rgba(219, 39, 119, 0.15);
+                        color: #be185d;
+                    }}
+                    
+                    .agent-color-4 .btn-show-agent.agent-color-4 .agent-number {{
+                        background-color: rgba(124, 58, 237, 0.15);
+                        color: #6d28d9;
+                    }}
+                    
+                    /* Updated expand indicator to match the theme colors */
+                    .agent-color-0 .btn-show-agent.agent-color-0 .expand-indicator {{
+                        background-color: rgba(79, 70, 229, 0.15);
+                        color: #4338ca;
+                    }}
+                    
+                    .agent-color-1 .btn-show-agent.agent-color-1 .expand-indicator {{
+                        background-color: rgba(13, 148, 136, 0.15);
+                        color: #0f766e;
+                    }}
+                    
+                    .agent-color-2 .btn-show-agent.agent-color-2 .expand-indicator {{
+                        background-color: rgba(217, 119, 6, 0.15);
+                        color: #b45309;
+                    }}
+                    
+                    .agent-color-3 .btn-show-agent.agent-color-3 .expand-indicator {{
+                        background-color: rgba(219, 39, 119, 0.15);
+                        color: #be185d;
+                    }}
+                    
+                    .agent-color-4 .btn-show-agent.agent-color-4 .expand-indicator {{
+                        background-color: rgba(124, 58, 237, 0.15);
+                        color: #6d28d9;
                     }}
                     
                     .agent-section {{
