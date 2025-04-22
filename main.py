@@ -1,5 +1,5 @@
 from Agents import create_all_workforces
-from utils import extract_pdf_OCR2, WorkForce_task, extract_content
+from utils import WorkForce_task, extract_content
 import gradio as gr
 
 
@@ -31,6 +31,6 @@ def demo_output(paper_path: str, paper_title: str):
     
     with open("results/The_association_between_gestational_diabetes_and_ASD_and_ADHD_a_systematic_review_and_metaanalysis_results.txt", "r") as file:
         result = eval("".join(file.readlines()))
-    with open("./sample_data/ocr.txt", "r") as file:
+    with open("./results/ocr.txt", "r") as file:
         ocr = "".join(file.readlines())
     return result, ocr
