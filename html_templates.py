@@ -384,10 +384,66 @@ def render_upload_form():
             }
         </style>
         <script>
+            // Store the event source as a global variable
+            let progressEventSource = null;
+            
             function showLoading() {
                 document.getElementById('loading').style.display = 'block';
                 document.querySelector('.btn-submit').disabled = true;
+                
+                // Connect to the progress update server
+                setupProgressUpdates();
+                
                 return true;
+            }
+            
+            // Function to update loading message
+            function updateLoadingMessage(message) {
+                const loadingText = document.getElementById('loading-text');
+                if (loadingText) {
+                    loadingText.textContent = message;
+                    console.log("Updated loading message:", message);
+                }
+            }
+            
+            // Set up event source for server-sent events
+            function setupProgressUpdates() {
+                try {
+                    // Close existing connection if any
+                    if (progressEventSource) {
+                        progressEventSource.close();
+                    }
+                    
+                    // Connect to progress updates endpoint
+                    // Use the correct port and host as configured in server.py
+                    const serverUrl = window.location.protocol + '//' + window.location.hostname + ':5001/progress-updates';
+                    console.log("Connecting to progress updates at:", serverUrl);
+                    
+                    progressEventSource = new EventSource(serverUrl);
+                    
+                    progressEventSource.onmessage = function(event) {
+                        console.log("Received progress update:", event.data);
+                        updateLoadingMessage(event.data);
+                    };
+                    
+                    progressEventSource.onerror = function(error) {
+                        console.error("Error with progress updates:", error);
+                        // Try to reconnect after a delay
+                        setTimeout(setupProgressUpdates, 3000);
+                    };
+                    
+                    // Test connection with a timeout
+                    setTimeout(function() {
+                        if (progressEventSource.readyState !== 1) {
+                            console.warn("Progress update connection not established within timeout");
+                        } else {
+                            console.log("Progress update connection established successfully");
+                        }
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error("Failed to setup progress updates:", error);
+                }
             }
             
             document.addEventListener('DOMContentLoaded', function() {
@@ -412,6 +468,12 @@ def render_upload_form():
                     setTimeout(() => {
                         element.style.opacity = '1';
                     }, 100);
+                });
+                
+                // Setup progress updates when form is submitted
+                const form = document.querySelector('form');
+                form.addEventListener('submit', function() {
+                    setupProgressUpdates();
                 });
             });
         </script>
@@ -457,7 +519,7 @@ def render_upload_form():
             </form>
             
             <div id="loading">
-                <p class="loading-text">Processing your request, please wait...</p>
+                <p id="loading-text" class="loading-text">Processing your request, please wait...</p>
                 <div class="spinner"></div>
             </div>
         </div>
