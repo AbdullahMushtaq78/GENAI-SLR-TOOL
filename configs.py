@@ -103,3 +103,57 @@ Ensure there is no loss of critical information during the aggregation.
 Use Markdown for formatting your response.
 """
 
+"""
+This module contains configuration settings for the Flask application.
+"""
+
+# Flask app settings
+PORT = 5001
+DEBUG = True
+
+# File paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+RESULTS_FOLDER = os.path.join(BASE_DIR, "results")
+
+# Create directories if they don't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(RESULTS_FOLDER, exist_ok=True)
+
+# Markdown extensions for text rendering
+MARKDOWN_EXTENSIONS = [
+    "abbr",
+    "attr_list",
+    "def_list",
+    "fenced_code",
+    "footnotes",
+    "tables",
+    "admonition",
+    "codehilite",
+    "meta",
+    "nl2br",
+    "sane_lists",
+    "smarty",
+    "toc",
+    "wikilinks",
+    "pymdownx.extra",
+    "pymdownx.emoji",
+    "pymdownx.tasklist",
+    "pymdownx.superfences",
+    "pymdownx.magiclink",
+    "pymdownx.highlight",
+    "pymdownx.keys",
+    "pymdownx.arithmatex",
+    "pymdownx.caret",
+    "pymdownx.mark",
+    "pymdownx.tilde",
+    "pymdownx.smartsymbols",
+    "pymdownx.betterem",
+    "pymdownx.escapeall",
+    "pymdownx.progressbar",
+    "pymdownx.inlinehilite",
+    "pymdownx.snippets",
+    "pymdownx.details",
+    "pymdownx.tabbed"
+]
+
