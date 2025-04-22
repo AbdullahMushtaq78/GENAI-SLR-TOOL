@@ -18,7 +18,10 @@ def render_chat_ui():
     <div class="chat-overlay" id="chatOverlay">
         <div class="chat-container">
             <div class="chat-header">
-                <h3><i class="fas fa-robot"></i> SLR-GPT Assistant</h3>
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>SLR-GPT Assistant</h3>
                 <button class="close-chat" id="closeChat">
                     <i class="fas fa-times"></i>
                 </button>
@@ -26,7 +29,14 @@ def render_chat_ui():
             <div class="chat-body">
                 <div class="chat-messages" id="chatMessages">
                     <div class="message bot-message">
-                        <p>👋 Hi there! I'm your SLR-GPT Assistant. I can help answer questions about the analysis of your paper. What would you like to know?</p>
+                        <div class="message-content">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-bubble">
+                                <p>👋 Hi there! I'm your SLR-GPT Assistant. I can help answer questions about the analysis of your paper. What would you like to know?</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -55,7 +65,7 @@ def get_chat_css():
         right: 2rem;
         width: 3.75rem;
         height: 3.75rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
         color: white;
         border-radius: 50%;
         display: flex;
@@ -65,6 +75,19 @@ def get_chat_css():
         box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
         transition: var(--transition-bounce);
         z-index: 1000;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+        }
     }
     
     .chat-btn i {
@@ -104,7 +127,7 @@ def get_chat_css():
     .chat-container {
         width: 70%;
         height: 80vh;
-        background-color: white;
+        background-color: #0f172a;
         border-radius: 20px;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         display: flex;
@@ -113,7 +136,7 @@ def get_chat_css():
         transform: translateY(30px);
         opacity: 0;
         transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
     }
     
     .chat-overlay.visible .chat-container {
@@ -126,9 +149,9 @@ def get_chat_css():
         align-items: center;
         justify-content: space-between;
         padding: 1.25rem 1.75rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        background: linear-gradient(135deg, #1e1b4b, #312e81);
         color: white;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
     
     .chat-header h3 {
@@ -139,11 +162,24 @@ def get_chat_css():
         display: flex;
         align-items: center;
         font-family: 'Montserrat', sans-serif;
+        color: #fff;
     }
     
-    .chat-header h3 i {
-        margin-right: 0.75rem;
-        font-size: 1.1rem;
+    .ai-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        margin-right: 1rem;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+    }
+    
+    .ai-avatar i {
+        font-size: 1.2rem;
+        color: white;
     }
     
     .close-chat {
@@ -170,9 +206,9 @@ def get_chat_css():
         flex: 1;
         padding: 1.75rem;
         overflow-y: auto;
-        background-color: #f8fafc;
+        background-color: #1e293b;
         scrollbar-width: thin;
-        scrollbar-color: #cbd5e0 #f8fafc;
+        scrollbar-color: #64748b #1e293b;
     }
     
     .chat-body::-webkit-scrollbar {
@@ -180,49 +216,89 @@ def get_chat_css():
     }
     
     .chat-body::-webkit-scrollbar-track {
-        background: #f8fafc;
+        background: #1e293b;
     }
     
     .chat-body::-webkit-scrollbar-thumb {
-        background-color: #cbd5e0;
+        background-color: #64748b;
         border-radius: 6px;
     }
     
     .chat-messages {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.5rem;
     }
     
     .message {
         max-width: 80%;
+        animation: fadeIn 0.3s ease;
+        font-size: 0.95rem;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message-content {
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .message-avatar {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+    }
+    
+    .user-message .message-avatar {
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: white;
+    }
+    
+    .bot-message .message-avatar {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+    }
+    
+    .message-bubble {
         padding: 1rem 1.25rem;
         border-radius: 18px;
         line-height: 1.5;
-        animation: fadeIn 0.3s ease;
-        box-shadow: var(--shadow-md);
-        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
     .user-message {
         align-self: flex-end;
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    }
+    
+    .user-message .message-bubble {
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
         color: white;
         border-bottom-right-radius: 4px;
     }
     
     .bot-message {
         align-self: flex-start;
-        background-color: white;
-        color: var(--text-primary);
+    }
+    
+    .bot-message .message-bubble {
+        background-color: #334155;
+        color: #f8fafc;
         border-bottom-left-radius: 4px;
-        border: 1px solid var(--border-color);
+        border: 1px solid rgba(99, 102, 241, 0.2);
     }
     
     .chat-input-container {
         padding: 1.25rem 1.5rem;
-        background-color: white;
-        border-top: 1px solid var(--border-color);
+        background-color: #0f172a;
+        border-top: 1px solid rgba(99, 102, 241, 0.2);
         display: flex;
         gap: 0.75rem;
         align-items: flex-end;
@@ -231,23 +307,29 @@ def get_chat_css():
     .chat-input {
         flex: 1;
         padding: 1rem 1.25rem;
-        border: 1px solid var(--border-color);
+        border: 1px solid rgba(99, 102, 241, 0.3);
         border-radius: 12px;
         font-size: 0.95rem;
         resize: none;
         max-height: 150px;
         transition: var(--transition-base);
         font-family: 'Poppins', sans-serif;
+        background-color: #1e293b;
+        color: #f8fafc;
+    }
+    
+    .chat-input::placeholder {
+        color: #94a3b8;
     }
     
     .chat-input:focus {
         outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
     }
     
     .send-btn {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
         color: white;
         border: none;
         padding: 0.9rem;
@@ -269,13 +351,64 @@ def get_chat_css():
     }
     
     .send-btn:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
         transform: scale(1.05);
         box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
     }
     
     .send-btn:hover i {
         transform: translateX(2px);
+    }
+    
+    /* Typing indicator animation */
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0.5rem 1rem;
+    }
+    
+    .typing-indicator span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #94a3b8;
+        border-radius: 50%;
+        animation: typingAnimation 1.5s infinite ease-in-out;
+    }
+    
+    .typing-indicator span:nth-child(1) {
+        animation-delay: 0s;
+    }
+    
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typingAnimation {
+        0%, 100% {
+            transform: translateY(0);
+            background-color: #64748b;
+        }
+        50% {
+            transform: translateY(-5px);
+            background-color: #94a3b8;
+        }
+    }
+    
+    /* AI text typing effect */
+    .typewriter {
+        white-space: break-spaces;
+        overflow: hidden;
+        opacity: 0;
+    }
+    
+    .typewriter.typing {
+        opacity: 1;
     }
     
     /* Responsive adjustments for chat UI */
@@ -323,6 +456,9 @@ def get_chat_css():
         
         .message {
             max-width: 90%;
+        }
+        
+        .message-bubble {
             padding: 0.9rem 1.1rem;
         }
     }
@@ -414,15 +550,15 @@ def get_chat_js():
                     // Remove loading indicator
                     removeLoadingMessage(loadingId);
                     
-                    // Add bot response
-                    addMessage(data.response, 'bot');
+                    // Add bot response with typing effect
+                    addBotMessageWithTypingEffect(data.response);
                 })
                 .catch(error => {
                     // Remove loading indicator
                     removeLoadingMessage(loadingId);
                     
                     console.error('Error:', error);
-                    addMessage('Sorry, I had trouble processing your request. Please try again.', 'bot');
+                    addBotMessageWithTypingEffect('Sorry, I had trouble processing your request. Please try again.');
                 });
             }
         }
@@ -430,7 +566,22 @@ def get_chat_js():
         function showLoadingMessage() {
             const loadingDiv = document.createElement('div');
             loadingDiv.classList.add('message', 'bot-message');
-            loadingDiv.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('message-avatar');
+            avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble');
+            messageBubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            
+            messageContent.appendChild(avatarDiv);
+            messageContent.appendChild(messageBubble);
+            loadingDiv.appendChild(messageContent);
+            
             chatMessages.appendChild(loadingDiv);
             
             // Scroll to the bottom
@@ -451,18 +602,117 @@ def get_chat_js():
             messageDiv.classList.add('message');
             messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
             
-            if (sender === 'bot') {
-                // For bot messages, render HTML content
-                messageDiv.innerHTML = text;
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('message-avatar');
+            
+            // Different icons for user and bot
+            if (sender === 'user') {
+                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
             } else {
-                // For user messages, keep as plain text
-                messageDiv.textContent = text;
+                avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
             }
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble');
+            
+            if (sender === 'user') {
+                messageBubble.textContent = text;
+            } else {
+                messageBubble.innerHTML = text;
+            }
+            
+            messageContent.appendChild(avatarDiv);
+            messageContent.appendChild(messageBubble);
+            messageDiv.appendChild(messageContent);
             
             chatMessages.appendChild(messageDiv);
             
             // Scroll to the bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addBotMessageWithTypingEffect(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'bot-message');
+            
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('message-avatar');
+            avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble');
+            
+            const typewriterDiv = document.createElement('div');
+            typewriterDiv.classList.add('typewriter');
+            // Create a temporary div to hold the HTML content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+            // Store the rendered HTML
+            const fullHTML = tempDiv.innerHTML;
+            typewriterDiv.innerHTML = '';
+            
+            messageBubble.appendChild(typewriterDiv);
+            messageContent.appendChild(avatarDiv);
+            messageContent.appendChild(messageBubble);
+            messageDiv.appendChild(messageContent);
+            
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to the bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Start typing effect with HTML parsing
+            startTypingEffect(typewriterDiv, fullHTML);
+        }
+        
+        function startTypingEffect(element, html) {
+            element.classList.add('typing');
+            
+            // For proper HTML rendering while typing, we need to handle the complete HTML
+            // rather than character by character
+            
+            // Parse the HTML to get all text nodes
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = html;
+            
+            // Extract the text content only
+            const textContent = tempContainer.textContent;
+            
+            // Keep the original HTML structure
+            const originalHTML = html;
+            
+            let i = 0;
+            const speed = 5; // typing speed in milliseconds (3x faster)
+            
+            // Create a display element for the typing animation
+            const displayElement = document.createElement('span');
+            element.appendChild(displayElement);
+            
+            function typeWriter() {
+                if (i < textContent.length) {
+                    // Add one character of text content at a time
+                    displayElement.textContent = textContent.substring(0, i + 1);
+                    i++;
+                    
+                    // Faster typing speed
+                    setTimeout(typeWriter, speed);
+                    
+                    // Scroll to the bottom as text is being typed
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else {
+                    // When typing is complete, replace with the original HTML
+                    // to ensure proper formatting and links
+                    element.innerHTML = originalHTML;
+                }
+            }
+            
+            typeWriter();
         }
         
         // Auto-resize textarea
