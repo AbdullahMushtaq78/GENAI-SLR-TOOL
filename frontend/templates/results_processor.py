@@ -3,7 +3,7 @@ This module contains functions to process and format analysis results.
 """
 
 import re
-from personas import roles, PERSONAS
+from backend.personas import roles, PERSONAS
 
 def generate_society_cards(raw_result, convert_markdown_func):
     """

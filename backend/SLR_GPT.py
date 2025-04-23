@@ -1,5 +1,5 @@
 from backend.config.configs import *
-from personas import SLR_GPT_PERSONA, PERSONAS
+from backend.personas import SLR_GPT_PERSONA, PERSONAS
 
 def format_societies_output(societies_output):
     formatted_output = ""

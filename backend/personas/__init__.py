@@ -32,11 +32,11 @@ roles = {
         "Selection Process Evaluator Agent",
         "Data Collection Process Evaluator Agent",
         "SLR Data Items Evaluation Agent",
+        "Synthesis Methods Evaluation Agent",
         "Study Risk of Bias Evaluation Agent",
         "Effect Measures Evaluation Agent",
         "Reporting Bias Assessment Evaluator Agent",
         "Certainty Assessment Evaluator Agent",
-        "Synthesis Methods Evaluation Agent",
     ],
     "4": [
         "Study Selection Evaluator",

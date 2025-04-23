@@ -8,7 +8,7 @@ from camel.societies.workforce import Workforce
 from camel.tasks import Task
 from camel.toolkits import FunctionTool, SearchToolkit, ArxivToolkit
 
-from personas import *
+from backend.personas import *
 from typing import List
 from dotenv import load_dotenv
 

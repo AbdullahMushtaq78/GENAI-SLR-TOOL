@@ -416,7 +416,7 @@ def render_upload_form():
                     
                     // Connect to progress updates endpoint
                     // Use the correct port and host as configured in server.py
-                    const serverUrl = window.location.protocol + '//' + window.location.hostname + ':5001/progress-updates';
+                    const serverUrl = window.location.protocol + '//' + window.location.hostname + ':5002/progress-updates';
                     console.log("Connecting to progress updates at:", serverUrl);
                     
                     progressEventSource = new EventSource(serverUrl);

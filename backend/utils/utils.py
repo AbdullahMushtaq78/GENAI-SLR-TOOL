@@ -1,7 +1,7 @@
 import pdfplumber
 import os
 from camel.tasks import Task
-from personas import roles
+from backend.personas import roles
 
 
 def extract_content(path: str) -> str:
