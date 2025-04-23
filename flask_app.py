@@ -9,18 +9,18 @@ import re
 import markdown
 
 # Import main functionality
-from main import demo_output, start_processing_SLR_pdf
-from SLR_GPT import SLR_GPT_Agent, SLR_GPT
+from backend.main import demo_output, start_processing_SLR_pdf
+from backend.SLR_GPT import SLR_GPT_Agent, SLR_GPT
 
 # Import modular components
-from static_styles import SOCIETY_COLORS, generate_society_css
-from html_templates import render_upload_form
-from utils_app import get_unique_filename
-from chat_ui import render_chat_ui, get_chat_css, get_chat_js
-from results_template import render_results_page
-from markdown_utils import convert_markdown
-from results_processor import generate_society_cards
-from configs import UPLOAD_FOLDER, RESULTS_FOLDER, PORT, DEBUG
+from frontend.static.styles.static_styles import SOCIETY_COLORS, generate_society_css
+from frontend.templates.html_templates import render_upload_form
+from frontend.utils.utils_app import get_unique_filename
+from frontend.SLR_GPT_chat.chat_ui import render_chat_ui, get_chat_css, get_chat_js
+from frontend.templates.results_template import render_results_page
+from frontend.utils.markdown_utils import convert_markdown
+from frontend.templates.results_processor import generate_society_cards
+from backend.config.configs import UPLOAD_FOLDER, RESULTS_FOLDER, PORT, DEBUG
 
 # Initialize Flask application
 app = Flask(__name__)

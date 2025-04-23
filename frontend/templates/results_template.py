@@ -1,6 +1,7 @@
 """
 This module contains HTML templates for rendering SLR evaluation results.
 """
+from frontend.static.styles.static_styles import generate_society_css
 
 def render_results_page(paper_title, raw_cards, generate_society_css):
     """

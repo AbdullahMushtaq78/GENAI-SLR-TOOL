@@ -3,6 +3,7 @@ This module provides utility functions for Markdown processing
 """
 
 import markdown
+from backend.config.configs import MARKDOWN_EXTENSIONS
 
 def convert_markdown(text, add_score_styling=False):
     """

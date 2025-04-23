@@ -1,4 +1,5 @@
-from configs import *
+from backend.config.configs import *
+
 def create_agent(name: str, role: str, persona: str, Paper_ocr:str) -> CriticAgent:
     name = name.replace("_", " ")
     persona = persona + TOOLS_PROMPT

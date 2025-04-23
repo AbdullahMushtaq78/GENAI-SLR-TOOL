@@ -1,5 +1,6 @@
-from configs import *
+from backend.config.configs import *
 from personas import SLR_GPT_PERSONA, PERSONAS
+
 def format_societies_output(societies_output):
     formatted_output = ""
     all_descriptions = [wf_persona["Workforce_description"] for wf_persona in PERSONAS]

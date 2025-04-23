@@ -112,7 +112,11 @@ PORT = 5001
 DEBUG = True
 
 # File paths
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Navigate up from the current file to the project root directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.abspath(os.path.join(current_dir, "../.."))  # Go up two levels to reach project root
+
+# Define upload and results folders at the project root
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 RESULTS_FOLDER = os.path.join(BASE_DIR, "results")
 

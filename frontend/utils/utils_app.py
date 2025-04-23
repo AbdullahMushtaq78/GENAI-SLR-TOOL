@@ -1,4 +1,5 @@
 import os
+from backend.config.configs import UPLOAD_FOLDER, RESULTS_FOLDER
 
 def get_unique_filename(base_path, filename):
     """Generate unique filename by adding number suffix if file exists"""

@@ -1,5 +1,5 @@
 from flask import Flask, Response, render_template_string
-from main import get_progress_update
+from backend.main import get_progress_update
 import time
 import threading
 

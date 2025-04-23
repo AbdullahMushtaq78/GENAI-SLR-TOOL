@@ -1,5 +1,5 @@
-from Agents import create_all_workforces
-from utils import WorkForce_task, extract_content
+from backend.agents.Agents import create_all_workforces
+from backend.utils.utils import WorkForce_task, extract_content
 import gradio as gr
 import threading
 import queue
@@ -73,7 +73,7 @@ def demo_output(paper_path: str, paper_title: str):
     update_progress("Loading demo data...")
     
     import time
-    time.sleep(5)
+    time.sleep(10)
     with open("results/The_association_between_gestational_diabetes_and_ASD_and_ADHD_a_systematic_review_and_metaanalysis_results.txt", "r") as file:
         result = eval("".join(file.readlines()))
     with open("./results/ocr.txt", "r") as file:
