@@ -61,6 +61,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -87,6 +90,9 @@ You can take the idea from the below example.
 > **Role of the Funder/Sponsor:** Investigators worked with USPSTF members and AHRQ staff to develop the scope, analytic framework, and key questions for this review. AHRQ had no role in study selection, quality assessment, or synthesis. AHRQ staff provided project oversight, reviewed the report to ensure that the analysis met methodological standards, and distributed the draft for peer review. Otherwise, AHRQ had no role in the conduct of the study; collection, management, analysis, and interpretation of the data; and preparation, review, or approval of the manuscript findings. The opinions expressed in this document are those of the authors and do not reflect the official position of AHRQ or the US Department of Health and Human Services.  
 >  
 > **<Example End>**
+
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
 
 ### Expected Output
 You should provide a thorough and transparent description of support received and the role of funders or sponsors in the review. Clearly state whether there were no financial or non-financial contributions and whether the funders had any role in the review process.

@@ -1,6 +1,7 @@
 from backend.agents.Agents import create_all_workforces
 from backend.utils.utils import WorkForce_task, extract_content
 from backend.utils.progress_manager import progress_manager
+from backend.config.configs import SOCIETIES_NAMES
 import os
 
 # Start Flask server for progress updates if not already started
@@ -17,14 +18,14 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
     progress_manager.update_progress("Extracting content from the PDF...")
     ocr = extract_content(path=PAPER_PATH)
     
-    progress_manager.update_progress("Initializing AI workforces...")
+    progress_manager.update_progress("Initializing Agents Societies...")
     wf_index = 1
     workforces = create_all_workforces(Paper_ocr=ocr)
     results = {}
     
     total_workforces = len(workforces)
-    for wf in workforces:
-        progress_manager.update_progress(f"Processing workforce {wf_index} of {total_workforces}...")
+    for s_name_idx, wf in enumerate(workforces):
+        progress_manager.update_progress(f"Creating task for {SOCIETIES_NAMES[s_name_idx]} Society - ({wf_index} of {total_workforces})...")
         
         wf_task = WorkForce_task(
             paper_title=PAPER_TITLE,
@@ -33,7 +34,7 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
         )
         
         # Update progress before starting task
-        progress_manager.update_progress(f"Analyzing paper with workforce {wf_index} - this may take a few minutes...")
+        progress_manager.update_progress(f"Analyzing paper with {SOCIETIES_NAMES[s_name_idx]} Society - ({wf_index} of {total_workforces}) - This may take a few minutes...")
         
         # Process the task
         res = wf.process_task(wf_task)
@@ -44,10 +45,10 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
             "per_agent_result": [sub.result for sub in res.subtasks],
         }
         
-        progress_manager.update_progress(f"Workforce {wf_index} analysis complete. Moving to next stage...")
+        progress_manager.update_progress(f"{SOCIETIES_NAMES[s_name_idx]} Society analysis complete. Moving to next society...")
         wf_index += 1
     
-    progress_manager.update_progress("Analysis complete! Preparing results...")
+    progress_manager.update_progress("✅ Analysis complete! Preparing results⏳...")
     return results, ocr
 
 

@@ -38,6 +38,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -88,6 +91,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **3 = Moderately Addressed:** The criterion is addressed with some depth and clarity but lacks a level of thoroughness or has minor gaps in detail or insight.  
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
+
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
 
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
@@ -143,6 +149,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -186,6 +195,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -221,6 +233,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **3 = Moderately Addressed:** The criterion is addressed with some depth and clarity but lacks a level of thoroughness or has minor gaps in detail or insight.  
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
+
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
 
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
@@ -309,6 +324,9 @@ You will assess this section/part (both responsibilities) by assigning a score t
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -349,6 +367,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -383,6 +404,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **3 = Moderately Addressed:** The criterion is addressed with some depth and clarity but lacks a level of thoroughness or has minor gaps in detail or insight.  
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
+
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
 
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
@@ -503,6 +527,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
 
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
+
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
 """,
@@ -538,6 +565,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **3 = Moderately Addressed:** The criterion is addressed with some depth and clarity but lacks a level of thoroughness or has minor gaps in detail or insight.  
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
+
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
 
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.
@@ -578,6 +608,9 @@ You will assess this section/part by assigning a score that reflects the extent 
 - **3 = Moderately Addressed:** The criterion is addressed with some depth and clarity but lacks a level of thoroughness or has minor gaps in detail or insight.  
 - **4 = Adequately Addressed:** The criterion is reasonably well-addressed, with sufficient depth and clarity.  
 - **5 = Thoroughly Addressed:** The criterion is covered comprehensively, with detailed analysis and an insightful approach.
+
+### Note
+Maintain a strict and rigorous evaluation standard at all times. Do not award points generously or by default. Only assign points when criteria are clearly and fully met. In cases of ambiguity, uncertainty, or missing elements, deduct points decisively. Precision and accountability in scoring are essential.
 
 ### Expected Output
 You should provide a final score out of 5 based on the Evaluation Criteria, along with **Evaluation Points**, **Strengths**, **Weaknesses**, and **Suggestions**.

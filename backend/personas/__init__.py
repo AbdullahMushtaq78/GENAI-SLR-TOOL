@@ -22,7 +22,6 @@ roles = {
     ],
     "2": [
         "SLR Rationale Evaluation Agent",
-        "Objectives Compliance Evaluator Agent",
         "SLR Objectives Evaluation Agent",
     ],
     "3": [
@@ -32,9 +31,9 @@ roles = {
         "Selection Process Evaluator Agent",
         "Data Collection Process Evaluator Agent",
         "SLR Data Items Evaluation Agent",
-        "Synthesis Methods Evaluation Agent",
         "Study Risk of Bias Evaluation Agent",
         "Effect Measures Evaluation Agent",
+        "Synthesis Methods Evaluation Agent",
         "Reporting Bias Assessment Evaluator Agent",
         "Certainty Assessment Evaluator Agent",
     ],

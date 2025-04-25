@@ -38,6 +38,7 @@ def WorkForce_task(paper_title: str, id: str, complete_paper=None) -> Task:
         
         Replace "Y" with the actual score given by that agent. Replace "..." with the actual feedback provided by the agent.
         And replace "X" with the overall mean score calculated based on the individual scores provided by the agents. Make sure averaged score provided by you is precise.
+        Do not create additional agents at all, just use the ones provided to you.
         """,
         # additional_info= f"## Here's the complete paper text: ---\n{complete_paper}\n---"
         additional_info=(
