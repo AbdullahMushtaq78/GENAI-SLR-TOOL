@@ -52,8 +52,10 @@ def start_processing_SLR_pdf(paper_path: str, paper_title):
     return results, ocr
 
 
+
 def demo_output(paper_path: str, paper_title: str):
     progress_manager.update_progress("Loading demo data...")
+    
 
     import time
     time.sleep(5)  # Simulate loading time
@@ -65,4 +67,38 @@ def demo_output(paper_path: str, paper_title: str):
         ocr = "".join(file.readlines())
     
     progress_manager.update_progress("Demo data loaded successfully!")
+    return result, ocr
+
+
+
+
+
+def demo_output2(paper_path: str, paper_title: str):
+    import time
+    progress_manager.update_progress("Extracting content from the PDF...")
+    time.sleep(1)  # Simulate loading time
+    progress_manager.update_progress("Initializing Agents Societies...")
+    time.sleep(2)  # Simulate loading time
+    # Loop through each society to simulate progress
+    for s_name_idx in range(len(SOCIETIES_NAMES)):
+        progress_manager.update_progress(f"Creating task for {SOCIETIES_NAMES[s_name_idx]} Society...")
+        time.sleep(2)
+        
+        progress_manager.update_progress(f"🔎 Analyzing paper with {SOCIETIES_NAMES[s_name_idx]} Society - This may take a few minutes...")
+        time.sleep(5)
+        
+        progress_manager.update_progress(f"✅ {SOCIETIES_NAMES[s_name_idx]} Society analysis complete. Moving to next society...")
+        time.sleep(2)
+
+    progress_manager.update_progress("✅ Analysis complete! Preparing results⏳...")
+
+    
+    time.sleep(3)  # Simulate loading time
+    
+    
+    with open("results/The_association_between_gestational_diabetes_and_ASD_and_ADHD_a_systematic_review_and_metaanalysis_results.txt", "r") as file:
+        result = eval("".join(file.readlines()))
+    with open("./results/ocr.txt", "r") as file:
+        ocr = "".join(file.readlines())
+    
     return result, ocr

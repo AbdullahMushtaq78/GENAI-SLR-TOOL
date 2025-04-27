@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Import main functionality
-from backend.main import demo_output, start_processing_SLR_pdf
+from backend.main import demo_output2, start_processing_SLR_pdf
 from backend.SLR_GPT import SLR_GPT_Agent, SLR_GPT
 from backend.utils.progress_manager import progress_manager
 
@@ -71,9 +71,8 @@ def index():
                     try:
                         # Process the PDF and get results
                         
-                        # raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
-                        raw_result, ocr = demo_output(pdf_path, paper_title)
-                        chat_agent = SLR_GPT_Agent(ocr, raw_result)
+                        #raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
+                        raw_result, ocr = demo_output2(pdf_path, paper_title)
 
                         if not raw_result:
                             raise ValueError("No results returned from PDF processing.")
@@ -85,6 +84,9 @@ def index():
                         with open(results_path, "w") as results_file:
                             results_file.write(str(raw_result))
                         logger.info(f"Results saved to {results_path}")
+                        
+                        # Create SLR-GPT Agent
+                        chat_agent = SLR_GPT_Agent(ocr, raw_result)
                         
                         # Process results to generate cards
                         raw_cards = generate_society_cards(raw_result, convert_markdown)
