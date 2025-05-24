@@ -15,6 +15,46 @@ def render_chat_ui():
         <i class="fas fa-robot"></i>
     </div>
     
+    <!-- PDF Viewer button and overlay -->
+    <div class="pdf-btn" id="pdfButton" title="View agents' division">
+        <i class="fas fa-project-diagram"></i>
+    </div>
+    
+    <!-- PRISMA Guidelines button and overlay -->
+    <div class="prisma-btn" id="prismaButton" title="View PRISMA Guidelines">
+        <i class="fas fa-clipboard-check"></i>
+    </div>
+    
+    <!-- PDF Overlay -->
+    <div class="pdf-overlay" id="pdfOverlay">
+        <div class="pdf-container">
+            <div class="pdf-header">
+                <h3>Agents Division Visualization</h3>
+                <button class="close-pdf" id="closePdf">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="pdf-body">
+                <iframe id="pdfViewer" src="/frontend/assets/Mindmap.pdf" width="100%" height="100%"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PRISMA Guidelines Overlay -->
+    <div class="prisma-overlay" id="prismaOverlay">
+        <div class="prisma-container">
+            <div class="prisma-header">
+                <h3>PRISMA Guidelines</h3>
+                <button class="close-prisma" id="closePrisma">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="prisma-body">
+                <iframe id="prismaViewer" src="/frontend/assets/PRISMA_guidelines.pdf" width="100%" height="100%"></iframe>
+            </div>
+        </div>
+    </div>
+    
     <div class="chat-overlay" id="chatOverlay">
         <div class="chat-container">
             <div class="chat-header">
@@ -76,6 +116,189 @@ def get_chat_css():
         transition: var(--transition-bounce);
         z-index: 1000;
         animation: pulse 2s infinite;
+    }
+    
+    /* PDF Button styles */
+    .pdf-btn {
+        position: fixed;
+        top: 6.5rem;
+        right: 2rem;
+        width: 3.75rem;
+        height: 3.75rem;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        transition: var(--transition-bounce);
+        z-index: 1000;
+        animation: pulse-pdf 2s infinite;
+    }
+    
+    /* PRISMA Button styles */
+    .prisma-btn {
+        position: fixed;
+        top: 11rem;
+        right: 2rem;
+        width: 3.75rem;
+        height: 3.75rem;
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+        transition: var(--transition-bounce);
+        z-index: 1000;
+        animation: pulse-prisma 2s infinite;
+    }
+    
+    @keyframes pulse-pdf {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+    
+    @keyframes pulse-prisma {
+        0% {
+            box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+        }
+    }
+    
+    .pdf-btn i {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .pdf-btn:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+    }
+    
+    .pdf-btn:hover i {
+        transform: scale(1.1);
+    }
+    
+    .prisma-btn i {
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .prisma-btn:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+    }
+    
+    .prisma-btn:hover i {
+        transform: scale(1.1);
+    }
+    
+    /* PDF Overlay styles */
+    .pdf-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(5px);
+        z-index: 1001;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .pdf-overlay.visible {
+        opacity: 1;
+    }
+    
+    .pdf-container {
+        width: 80%;
+        height: 90vh;
+        background-color: #0f172a;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transform: translateY(30px);
+        opacity: 0;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .pdf-overlay.visible .pdf-container {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .pdf-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.75rem;
+        background: linear-gradient(135deg, #059669, #10b981);
+        color: white;
+        border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .pdf-header h3 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.25rem;
+        letter-spacing: -0.01em;
+        font-family: 'Montserrat', sans-serif;
+        color: #fff;
+    }
+    
+    .close-pdf {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: var(--transition-base);
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .close-pdf:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: rotate(90deg);
+    }
+    
+    .pdf-body {
+        flex: 1;
+        overflow: hidden;
+        background-color: #1e293b;
+    }
+    
+    #pdfViewer {
+        border: none;
+        background-color: white;
     }
     
     @keyframes pulse {
@@ -462,6 +685,97 @@ def get_chat_css():
             padding: 0.9rem 1.1rem;
         }
     }
+    
+    /* PRISMA Overlay styles */
+    .prisma-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(5px);
+        z-index: 1001;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .prisma-overlay.visible {
+        opacity: 1;
+    }
+    
+    .prisma-container {
+        width: 80%;
+        height: 90vh;
+        background-color: #0f172a;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transform: translateY(30px);
+        opacity: 0;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+    
+    .prisma-overlay.visible .prisma-container {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .prisma-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.75rem;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    
+    .prisma-header h3 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.25rem;
+        letter-spacing: -0.01em;
+        font-family: 'Montserrat', sans-serif;
+        color: #fff;
+    }
+    
+    .close-prisma {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: var(--transition-base);
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .close-prisma:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: rotate(90deg);
+    }
+    
+    .prisma-body {
+        flex: 1;
+        overflow: hidden;
+        background-color: #1e293b;
+    }
+    
+    #prismaViewer {
+        border: none;
+        background-color: white;
+    }
     """
 
 def get_chat_js():
@@ -480,6 +794,74 @@ def get_chat_js():
         const chatInput = document.getElementById('chatInput');
         const sendMessage = document.getElementById('sendMessage');
         const chatMessages = document.getElementById('chatMessages');
+        
+        // PDF Viewer elements
+        const pdfButton = document.getElementById('pdfButton');
+        const pdfOverlay = document.getElementById('pdfOverlay');
+        const closePdf = document.getElementById('closePdf');
+        const pdfViewer = document.getElementById('pdfViewer');
+        
+        // PRISMA Guidelines elements
+        const prismaButton = document.getElementById('prismaButton');
+        const prismaOverlay = document.getElementById('prismaOverlay');
+        const closePrisma = document.getElementById('closePrisma');
+        const prismaViewer = document.getElementById('prismaViewer');
+        
+        // Open PRISMA overlay with animation
+        prismaButton.addEventListener('click', function() {
+            prismaOverlay.style.display = 'flex';
+            setTimeout(() => {
+                prismaOverlay.classList.add('visible');
+            }, 10);
+            
+            // Set the correct path to the PDF
+            prismaViewer.src = '/static/assets/PRISMA_guidelines.pdf';
+        });
+        
+        // Close PRISMA overlay with animation
+        function closePrismaOverlay() {
+            prismaOverlay.classList.remove('visible');
+            setTimeout(() => {
+                prismaOverlay.style.display = 'none';
+            }, 300);
+        }
+        
+        closePrisma.addEventListener('click', closePrismaOverlay);
+        
+        // Close PRISMA overlay when clicking outside the container
+        prismaOverlay.addEventListener('click', function(event) {
+            if (event.target === prismaOverlay) {
+                closePrismaOverlay();
+            }
+        });
+        
+        // Open PDF overlay with animation
+        pdfButton.addEventListener('click', function() {
+            pdfOverlay.style.display = 'flex';
+            setTimeout(() => {
+                pdfOverlay.classList.add('visible');
+            }, 10);
+            
+            // Set the correct path to the PDF
+            pdfViewer.src = '/static/assets/Mindmap.pdf';
+        });
+        
+        // Close PDF overlay with animation
+        function closePdfOverlay() {
+            pdfOverlay.classList.remove('visible');
+            setTimeout(() => {
+                pdfOverlay.style.display = 'none';
+            }, 300);
+        }
+        
+        closePdf.addEventListener('click', closePdfOverlay);
+        
+        // Close PDF overlay when clicking outside the PDF container
+        pdfOverlay.addEventListener('click', function(event) {
+            if (event.target === pdfOverlay) {
+                closePdfOverlay();
+            }
+        });
         
         // Open chat overlay with animation
         chatButton.addEventListener('click', function() {

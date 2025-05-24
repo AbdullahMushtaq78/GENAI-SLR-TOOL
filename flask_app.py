@@ -2,7 +2,7 @@
 Flask application for the SLR (Systematic Literature Review) analysis tool.
 """
 
-from flask import Flask, request, render_template_string, jsonify
+from flask import Flask, request, render_template_string, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import re
@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Import main functionality
-from backend.main import demo_output2, start_processing_SLR_pdf
+from backend.main import demo_output, demo_output2, start_processing_SLR_pdf
 from backend.SLR_GPT import SLR_GPT_Agent, SLR_GPT
 from backend.utils.progress_manager import progress_manager
 
@@ -40,6 +40,10 @@ chat_agent = None
 # Ensure upload and results directories exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULTS_FOLDER, exist_ok=True)
+
+# Set up static folder for serving assets
+app.static_folder = 'frontend'
+app.static_url_path = '/static'
 
 # Lock for request handling to prevent race conditions
 request_lock = threading.Lock()
@@ -72,7 +76,8 @@ def index():
                         # Process the PDF and get results
                         
                         #raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
-                        raw_result, ocr = demo_output2(pdf_path, paper_title)
+                        raw_result, ocr = demo_output(pdf_path, paper_title)
+                        # raw_result, ocr = demo_output2(pdf_path, paper_title)
 
                         if not raw_result:
                             raise ValueError("No results returned from PDF processing.")
@@ -146,6 +151,46 @@ def chat():
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")
         return {"response": f"Sorry, I encountered an error processing your request: {str(e)}"}, 500
+
+
+# Route to serve the mindmap PDF file
+@app.route('/static/assets/Mindmap.pdf')
+def serve_mindmap_pdf():
+    """Serve the Mindmap PDF file."""
+    return send_from_directory('frontend/assets', 'Mindmap.pdf')
+
+
+# Route to serve the PRISMA Guidelines PDF file
+@app.route('/static/assets/PRISMA_guidelines.pdf')
+def serve_prisma_pdf():
+    """Serve the PRISMA Guidelines PDF file."""
+    return send_from_directory('frontend/assets', 'PRISMA_guidelines.pdf')
+
+
+# Route to download results file
+@app.route('/download/<paper_title>')
+def download_results(paper_title):
+    """Download the analysis results for a specific paper."""
+    try:
+        # Create the results filename based on the paper title
+        results_filename = secure_filename(f"{paper_title}_results.txt")
+        results_path = os.path.join(RESULTS_FOLDER, results_filename)
+        
+        # Check if the file exists
+        if not os.path.exists(results_path):
+            logger.error(f"Results file not found: {results_path}")
+            return "Results file not found", 404
+            
+        # Return the file as an attachment (for download)
+        return send_from_directory(
+            directory=RESULTS_FOLDER,
+            path=results_filename,
+            as_attachment=True,
+            download_name=results_filename
+        )
+    except Exception as e:
+        logger.error(f"Error downloading results: {str(e)}")
+        return f"Error downloading results: {str(e)}", 500
 
 
 # Health check endpoint

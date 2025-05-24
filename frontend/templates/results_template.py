@@ -149,7 +149,7 @@ def render_results_page(paper_title, raw_cards, generate_society_css):
                 left: 0;
                 width: 100%;
                 height: calc(100% - 7px);
-                background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%236366f1' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
+                background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%236366f1' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
                 opacity: 0.6;
                 z-index: 0;
                 pointer-events: none;
@@ -548,6 +548,41 @@ def render_results_page(paper_title, raw_cards, generate_society_css):
                 100% {{ transform: translateY(0); }}
             }}
             
+            /* Download button styles */
+            .results-header {{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1.5rem;
+            }}
+            
+            .btn-download {{
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                box-shadow: var(--shadow-md);
+            }}
+            
+            .btn-download:hover {{
+                background-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+            }}
+            
+            .btn-download i {{
+                margin-right: 0.5rem;
+            }}
+            
             {generate_society_css()}
         </style>
     </head>
@@ -566,7 +601,12 @@ def render_results_page(paper_title, raw_cards, generate_society_css):
                 </div>
             </div>
             
-            <h2>Detailed Analysis Results</h2>
+            <div class="results-header">
+                <h2>Detailed Analysis Results</h2>
+                <a href="/download/{paper_title}" class="btn-download" title="Download Results">
+                    <i class="fas fa-download"></i> Download Results
+                </a>
+            </div>
             
             {raw_cards}
         </div>
