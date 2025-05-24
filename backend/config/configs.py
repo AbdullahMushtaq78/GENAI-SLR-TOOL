@@ -45,8 +45,8 @@ TOOLS_PROMPT = arxiv_tool_prompt
 
 
 # Flask app settings
-PORT = 5001
-DEBUG = True
+PORT = int(os.environ.get('PORT', 5001))
+DEBUG = os.environ.get('FLASK_ENV') != 'production'
 
 # File paths
 # Navigate up from the current file to the project root directory
