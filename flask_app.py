@@ -32,6 +32,16 @@ from backend.config.configs import UPLOAD_FOLDER, RESULTS_FOLDER, PORT, DEBUG
 # Initialize Flask application
 app = Flask(__name__)
 
+# Configure the Flask app
+app.config.update(
+    SECRET_KEY=os.environ.get('SECRET_KEY', 'dev-key-for-testing'),
+    MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
+)
+
+# Set SERVER_NAME only in development mode, not in production
+if os.environ.get('FLASK_ENV') != 'production':
+    app.config['SERVER_NAME'] = f"localhost:{PORT}"
+
 # Global variables to store analysis results
 raw_result = None
 ocr = None
@@ -75,8 +85,8 @@ def index():
                     try:
                         # Process the PDF and get results
                         
-                        #raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
-                        raw_result, ocr = demo_output(pdf_path, paper_title)
+                        raw_result, ocr = start_processing_SLR_pdf(pdf_path, paper_title)
+                        # raw_result, ocr = demo_output(pdf_path, paper_title)
                         # raw_result, ocr = demo_output2(pdf_path, paper_title)
 
                         if not raw_result:
@@ -214,7 +224,5 @@ if __name__ == "__main__":
     time.sleep(1)
     
     logger.info(f"Starting main application on port {PORT}")
-    # Use a unique name for the Flask app instance to avoid conflicts
-    app.config['SERVER_NAME'] = f"localhost:{PORT}"
     # Start the main Flask application
     app.run(debug=DEBUG, port=PORT, host='0.0.0.0', threaded=True, use_reloader=False)

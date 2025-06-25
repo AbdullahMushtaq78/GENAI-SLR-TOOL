@@ -1,8 +1,52 @@
-Flask==2.3.3
-Werkzeug==2.3.7
-python-dotenv==1.0.0
-markdown==3.5.1
-pdfplumber==0.9.0
-camel-ai==0.1.5.6
+# Core Flask web framework and utilities
+Flask==3.1.0
+Werkzeug==3.1.3
 gunicorn==21.2.0
-pymdown-extensions==10.3.1 
+
+# AI/ML and NLP libraries
+camel-ai==0.2.46
+openai==1.68.2
+markdown==3.7
+
+# HTTP and OAuth libraries
+requests==2.32.0
+requests-oauthlib==2.0.0
+oauthlib==3.2.2
+
+# PDF processing and document handling
+pdfplumber==0.11.4
+unstructured==0.10.30
+unstructured-inference==0.7.11
+pdf2image==1.17.0
+pytesseract==0.3.13
+unstructured.pytesseract==0.3.13
+
+
+# Environment and configuration
+python-dotenv==1.0.1
+
+# Markdown extensions for enhanced text rendering
+pymdown-extensions==10.14.3
+
+# Additional dependencies required by camel-ai
+arxiv==2.1.3
+beautifulsoup4==4.13.4
+dataclasses-json==0.6.7
+huggingface-hub==0.32.0
+numpy==2.2.6
+pandas==2.2.3
+pydantic==2.11.5
+PyYAML==6.0.2
+tokenizers==0.21.1
+transformers==4.52.3
+torch==2.7.0
+torchvision==0.22.0
+
+# Standard library imports (no installation needed):
+# os, re, threading, queue, time, socket, typing, logging
+
+# File handling and security
+# werkzeug.utils (included with Flask)
+
+# Development and deployment
+# gunicorn (already included above)

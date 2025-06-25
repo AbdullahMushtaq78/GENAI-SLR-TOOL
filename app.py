@@ -23,6 +23,9 @@ app.config['ENV'] = 'production'
 if 'SERVER_NAME' in app.config:
     del app.config['SERVER_NAME']
 
+# Add SERVER_NAME None explicitly to fix the KeyError issue
+app.config['SERVER_NAME'] = None
+
 def create_app():
     """Application factory for production."""
     try:
