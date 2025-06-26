@@ -1,0 +1,34 @@
+# Core Flask web framework and utilities
+Flask==3.1.0
+Werkzeug==3.1.3
+gunicorn==21.2.0
+
+# AI/ML and NLP libraries (simplified versions)
+openai==1.68.2
+markdown==3.7
+
+# HTTP libraries
+requests==2.32.0
+requests-oauthlib==2.0.0
+oauthlib==3.2.2
+
+# PDF processing (simplified)
+pdfplumber==0.11.4
+pdf2image==1.17.0
+pytesseract==0.3.13
+
+# Environment and configuration
+python-dotenv==1.0.1
+
+# Markdown extensions
+pymdown-extensions==10.14.3
+
+# Basic dependencies
+beautifulsoup4==4.13.4
+numpy==1.24.3
+pandas==2.0.3
+pydantic==2.5.0
+PyYAML==6.0.2
+
+# Additional utilities
+Pillow>=9.1
