@@ -16,6 +16,11 @@ The project introduces a novel **Multi-Agent System (MAS)** powered by LLMs to e
 
 ## 🏗 System Architecture
 
+### Architecture Diagram
+
+![System Architecture](SLR_Tool_Diagram.png)  
+*Figure: System architecture integrating multiple agents for automated SLR evaluation.*
+
 The MAS-LLM SLR Evaluation Framework consists of **six specialized agent societies** plus standalone utility agents. Each society contains multiple agents responsible for evaluating specific sections of an SLR document. The system workflow ensures structured evaluation, comprehensive scoring, and actionable feedback.
 
 ### Society Structure
@@ -42,13 +47,6 @@ The MAS-LLM SLR Evaluation Framework consists of **six specialized agent societi
 6. **Society-Level Aggregation:** Coordinator compiles outputs from all agents in the society.  
 7. **Final Output Generation:** Consolidated structured evaluation is generated.  
 8. **User Interaction:** Results are presented via a **web-based interface** and a **Follow-up Conversation Agent (SLR-GPT)** enables interactive queries.
-
----
-
-### Architecture Diagram
-
-![System Architecture](SLR_Tool_Diagram.png)  
-*Figure: System architecture integrating multiple agents for automated SLR evaluation.*
 
 ---
 
